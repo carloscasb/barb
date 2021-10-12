@@ -51,6 +51,14 @@ import { StyleSheet } from "react-native";
         marginLeft: 'auto',
         marginRight:'auto'
     },
+
+    inputArea:{
+        backgroundColor:'#63C2D1',
+        padding: 40,
+        width: '100%',
+        height: 400
+    },
+
     footer:{
         width: '100%',
         height: '78%',
@@ -76,6 +84,40 @@ import { StyleSheet } from "react-native";
     textoWidth:{
         width: '80%'
     },
+    // TouchableOpacity
+    CustonButton:{
+        height:60,
+        backgroundColor:'#268596',
+        borderRadius:30,
+        justifyContent:'center',
+        alignItems:'center'
+    },
+
+    TextCuston:{
+        fontSize:18,
+        color:'#268596'
+
+    },
+
+    TextCustonBold:{
+        fontSize:18,
+        color:'#268596',
+        fontWeight:'bold',
+        marginLeft:5
+
+    },
+
+    // TouchableOpacity , texto uma ao lado do outro
+    CustonMessageButton:{
+        flexDirection:'row',
+        justifyContent:'center',
+        marginTop:50,
+        marginBottom:20
+
+
+
+    },
+
     button:{
         borderRadius: 5,
         backgroundColor: '#111',
@@ -98,3 +140,4 @@ import styled from 'styled-components/native'
 export const LoadingIcon = styled.ActivityIndicator`
     margin-top: 50px;
 `;
+

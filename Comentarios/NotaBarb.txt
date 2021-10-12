@@ -400,7 +400,393 @@ export default function App() {
 
 13---FAZER A SEGUNDA TELA (SignIn)
 
----VAMOS FAZER COmpomentes para usar qando desejar
+---VAMOS FAZER Compomentes para usar qando desejar
+
+----Primeiramentes vamos fazer alguns componentes na tela com css
+Depois a gente Faz EXTERNOS os componentes que serão comum as outras telas
+---Estilizando a tela  SignIn.js FICA ASSIM (ainda falta os componentes externos)
+
+import React from "react";
+import { View, Text, Image, TouchableOpacity } from "react-native";
+import css from '../assets/css/Css'
+
+
+export  default  function App1(){
+    return(
+      
+      <View style={css.headerdois}>
+      
+         <Image style={css.header__img} source={require('../assets/images/barber.png')} />
+
+         <View style={css.inputArea}>
+
+         //OS COMPONENTES EXTERNOS FICARÃO AQUI
+       
+           <TouchableOpacity style={css.CustonButton}>
+             <Text style={css.button__text}  >Login</Text>
+           </TouchableOpacity> 
+           </View>
+
+           <TouchableOpacity  style={css.CustonMessageButton}>
+            <Text style={css.TextCuston} > Ainda sem cadastro </Text>
+            <Text style={css.TextCustonBold} > Cadastre-se </Text>
+           </TouchableOpacity>
+
+        </View>
+     
+    );
+}
+
+
+-- estilizamos alguns omponentes na PASTA css
+  inputArea:{
+        backgroundColor:'#63C2D1',
+        padding: 40,
+        width: '80%',
+        height: 400
+    },
+
+ CustonButton:{
+        height:60,
+        backgroundColor:'#268596',
+        borderRadius:30,
+        justifyContent:'center',
+        alignItems:'center'
+    },
+
+    TextCuston:{
+        fontSize:18,
+        color:'#268596'
+
+    },
+
+    TextCustonBold:{
+        fontSize:18,
+        color:'#268596',
+        fontWeight:'bold',
+        marginLeft:5
+
+    },
+
+    // TouchableOpacity , texto uma ao lado do outro
+    CustonMessageButton:{
+        flexDirection:'row',
+        justifyContent:'center',
+        marginTop:50,
+        marginBottom:20
+
+    },
+
+
+
+
+14 ---COMPONENTES EXTERNO (serão usando em varias telas, inclusive na SignIn.js)
+VAMOS CRIAR E GUARDAR-LOS NA PASTA componentes
+
+-----PRIMEIRO COMPONENTES (SignInput.js)  --INICIALMENTE
+import React from "react";
+import {View, StyleSheet, Text }   from "react-native";
+
+const estilos = StyleSheet.create({
+
+    ImputArea:{
+        with:'100%',
+        height:60,
+         backgroundColor:'#268596',
+         flexDirection:'row', 
+         borderRadius:30,
+         paddingLeft:15,
+         alignItems:'center',
+         marginBottom:15
+       
+        }
+    });
+
+   
+
+export default ()=>{
+
+return (
+  <View style={estilos.ImputArea} > 
+ <Text>ot</Text>
+  </View>
+
+
+);
+}
+
+-------E O CHAMARIA (usaria) (importando o componentes) e Aplicando na VIEW SignIn.js
+import React from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import css from '../assets/css/Css'
+import SignInput from "../../componentes/SignInput";
+
+
+export  default  function App1(){
+    return(
+      
+      <View style={css.headerdois}>
+      
+         <Image style={css.header__img} source={require('../assets/images/barber.png')} />
+       
+         <View style={css.inputArea}>
+         
+             <SignInput/>
+              
+              <SignInput/>
+
+           <TouchableOpacity style={css.CustonButton}>
+              <Text style={css.button__text}  >Login</Text>
+           </TouchableOpacity> 
+           </View>
+
+           <TouchableOpacity  style={css.CustonMessageButton}>
+            <Text style={css.TextCuston} > Ainda sem cadastro </Text>
+            <Text style={css.TextCustonBold} > Cadastre-se </Text>
+           </TouchableOpacity>
+
+        </View>
+    
+    );
+}
+
+
+
+15--VAMOS MELHORAR - No SignInput.js
+--VAMOS COLOCAR O ICON E O CAMPO no IMput de login e Senha   ---NÃO CONSEGUI COLOCAR O ICON XXXXXXXXX
+
+import React from "react";
+import {View, StyleSheet, Text, Image, TextInput}   from "react-native";
+
+const estilos = StyleSheet.create({
+
+    ImputArea:{
+        with:'100%',
+        height:60,
+         backgroundColor:'#83D6E3',
+         flexDirection:'row', 
+         borderRadius:30,
+         paddingLeft:15,
+         alignItems:'center',
+         marginBottom:15
+       
+        },
+
+        TextImput2:{
+            flex:1,
+            fontSize:16,
+            color:'#268596',
+            marginLeft:15
+        }
+    });
+
+   // <IconPng  with="24" height="24" fill="#268596" />
+
+export default ({IconPng, placeholder} )=>{
+
+return (
+  <View style={estilos.ImputArea} > 
+
+    <TextInput style={estilos.TextImput2} placeholder={placeholder} ></TextInput>
+  </View>
+
+
+);
+}
+
+-----E A SignUp.js
+import React from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import css from '../assets/css/Css'
+import SignInput from "../../componentes/SignInput";
+
+import Envelope from "../assets/images/Envelope.png";
+import Cadeado from  "../assets/images/Cadeado.png";
+
+
+export  default  function App1(){
+    return(
+      
+      <View style={css.headerdois}>
+      
+         <Image style={css.header__img} source={require('../assets/images/barber.png')} />
+       
+         <View style={css.inputArea}>
+         
+             <SignInput IconPng={Envelope}
+             placeholder="Digite seu Email"
+             /> 
+              
+              <SignInput IconPng={Cadeado}
+              placeholder="Digite Sua Senha"
+              />
+
+           <TouchableOpacity style={css.CustonButton}>
+              <Text style={css.button__text}  >Login</Text>
+           </TouchableOpacity> 
+           </View>
+
+           <TouchableOpacity  style={css.CustonMessageButton}>
+            <Text style={css.TextCuston} > Ainda sem cadastro </Text>
+            <Text style={css.TextCustonBold} > Cadastre-se </Text>
+           </TouchableOpacity>
+
+        </View>
+    
+    );
+}
+
+16 ------TENTAR FAZER FUNCIONAR O LOGIN
+---VAMOS criar state do email e da senha NA VIEW  SignIn.js 
+ const [emailField, setEmailField] = useState('');
+ const [passwordField, setPasswordField] = useState('');
+----Usaremos o UseState lá em cima
+-e repasaremos nos nos SignInput com o value
+  <SignInput IconPng={Envelope}
+             placeholder="Digite seu Email"
+             value={emailField}
+             /> 
+              
+              <SignInput IconPng={Cadeado}
+              placeholder="Digite Sua Senha"
+              value={passwordField}
+              />
+---e vamos repassar tambem para a VIEW SignInput.js no imput com o value igual ao value
+     export default ({IconPng, placeholder, value} )=>{
+
+return (
+  <View style={estilos.ImputArea} > 
+
+    <TextInput style={estilos.TextImput2} placeholder={placeholder} ></TextInput>
+    Value={value}
+  </View>
+
+);
+}
+
+----NESSE MOMENTO SE QUISSER FAZER UM TESTE É SO COLOCAR UM STRING NO Started
+export  default  function App1(){
+
+      const [emailField, setEmailField] = useState('carlos@gloa');
+      const [passwordField, setPasswordField] = useState('');
+----------
+---AGORA PRECISAMOS A PESSOA MUDAR O texto
+---NA view SignIn.js VAMOS POR A PROPRIEDADE onChangeText PARA Mudar o text 
+ <View style={css.inputArea}>
+         
+             <SignInput IconPng={Envelope}
+             placeholder="Digite seu Email"
+             value={emailField}
+             onChangeText={t=>setEmailField(t)}
+             /> 
+              
+              <SignInput IconPng={Cadeado}
+              placeholder="Digite Sua Senha"
+              value={passwordField}
+              onChangeText={t=>setPasswordField(t)}
+              />
+---E Repassar para a VIEW SignInput.js no imput com o onChangeText={onChangeText} (REPLICAR)
+export default ({IconPng, placeholder, value, onChangeText} )=>{
+
+return (
+  <View style={estilos.ImputArea} > 
+
+    <TextInput style={estilos.TextImput2}
+     placeholder={placeholder} 
+     value={value}
+     onChangeText={onChangeText}
+    
+    />
+   
+  </View>
+
+);
+}
+
+-----APARTIR DE AGORA POSSO CONTROLAR --DIGITAR O desejado
+---NA SENHA PRECISAMOS OMITIR O conteudo
+---NA View SignIn.js VAMOS dizer que a password é verdadeira
+<SignInput IconPng={Cadeado}
+              placeholder="Digite Sua Senha"
+              value={passwordField}
+              onChangeText={t=>setPasswordField(t)}
+              password={true}
+              />
+ --E AO REPLICARMOS NA VIEW SignInput.js FLAR QUE ELA È SEGURA PELA PROPRIEDADE secureTextEntry={password}
+export default ({IconPng, placeholder, value, onChangeText, password} )=>{
+
+return (
+  <View style={estilos.ImputArea} > 
+
+    <TextInput style={estilos.TextImput2}
+     placeholder={placeholder} 
+     value={value}
+     onChangeText={onChangeText}
+    secureTextEntry={password}
+    />
+   
+  </View>
+
+);
+}
+
+----------OK PERFEITO
+
+17--VAMOS CRIAR A TELA DE REGISTRO\CADASTRO (SignUp.js)
+import React from "react";
+import { View, Text } from "react-native";
+
+export  default  function App1(){
+    return(
+      <View >
+        
+        <Text >Vai dar tudo Certo</Text>
+        <Text >Com a bença do Senhor</Text>
+        </View>
+    );
+}
+
+
+18---AÇÃO do BOTÃO CADASTRA-SE (ir para tela de registro) e LOGIn na |TELA SignIn.js
+--PARA NAVEGAR PRECISAMOS DO NAVIGATION --VAMOS IMPORTAR-LO
+import { useNavigation } from "@react-navigation/native";
+---E CRIAR UMA VARIAVEL DE navegação
+
+---VAmos Criar uma função para direcionar na tela SignIn.js (LOGIN) atraves do evento onpress
+ //Função de redirecionamento
+
+        const handleSignClick= ()=> { 
+
+        }
+ 
+         const handleMessageButtonClick= ()=> { 
+            
+         }
+
+-----Evento onpress
+<TouchableOpacity style={css.CustonButton} onPress={handleSignClick} >
+              <Text style={css.button__text}  >Login</Text>
+           </TouchableOpacity> 
+           </View>
+
+           <TouchableOpacity  style={css.CustonMessageButton} onPress={handleMessageButtonClick} >
+
+---------           
+
+
+
+
+
+
+
+
+
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~
+
 
 
 
