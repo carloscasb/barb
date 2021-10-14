@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Preload from "./barb/screens/preload";
 import SignIn from './barb/screens/SignIn';
+import SignUp from './barb/screens/SignUp';
 // IMPORTAT CONTEXT que ira  ENGLOBAR O APLICATIVO (NavigationContainer)
 import UserContextProfile from './barb/contexts/UserContext';
 
@@ -24,6 +25,7 @@ export default function App() {
           // EXIBINDO uma tela Preload ---vai ficar um de cada vez (DEFINR A PRIMEIRA EM  <Stack.Navigator initialRouteName="Preload">)
           />
            <Stack.Screen name="SignIn" component={SignIn}   options={{headerShown:false}}/>
+           <Stack.Screen name="SignUp" component={SignUp}   options={{headerShown:false}}/>
           </Stack.Navigator>
       </NavigationContainer>
 
