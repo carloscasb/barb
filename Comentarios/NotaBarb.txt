@@ -732,27 +732,108 @@ return (
 
 ----------OK PERFEITO
 
-17--VAMOS CRIAR A TELA DE REGISTRO\CADASTRO (SignUp.js)
-import React from "react";
-import { View, Text } from "react-native";
+17--VAMOS CRIAR A TELA DE REGISTRO\CADASTRO (SignUp.js) que é identica a essa so que um campo a mais
+---COPIA A SignIm.js e cola na SignUp.js
 
-export  default  function App1(){
+
+import React, {useState, useEffect} from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import css from '../assets/css/Css'
+import SignInput from "../../componentes/SignInput";
+import { useNavigation } from "@react-navigation/native";
+
+import Envelope from "../assets/images/Envelope.png";
+import Cadeado from  "../assets/images/Cadeado.png";
+
+
+export  default  function App2(){
+
+ 
+
+   //Função de NAVEGAÇÃO
+   const navigation=useNavigation();
+
+
+   //Função de state
+      const [nomeField, setNameField] = useState('');
+      const [emailField, setEmailField] = useState('');
+      const [passwordField, setPasswordField] = useState('');
+
+      
+   //Função de redirecionamento
+
+        const handleSignClick= ()=> { 
+
+        }
+
+   
+         const handleMessageButtonClick = ()=> { 
+             // NAVEGAR POR ROUTER
+            //navigation.navigate('SignUp');
+          // handleMessageButtonClick();
+             navigation.navigate({ 
+               routes:[{name: 'SignIn'}]
+            });
+           /*
+            onPress= ()=>{SignUp}  
+                
+           onPress={()=>{navigation.navigate("Home")}}  */
+         }
+
     return(
-      <View >
-        
-        <Text >Vai dar tudo Certo</Text>
-        <Text >Com a bença do Senhor</Text>
+      
+      <View style={css.headerdois}>
+      
+         <Image style={css.header__img} source={require('../assets/images/barber.png')} />
+       
+         <View style={css.inputArea}>
+
+            <SignInput IconPng={Envelope}
+             placeholder="Digite seu Nome"
+             value={nomeField}
+             onChangeText={t=>setNameField(t)}
+             /> 
+
+             <SignInput IconPng={Envelope}
+             placeholder="Digite seu Email"
+             value={emailField}
+             onChangeText={t=>setEmailField(t)}
+             /> 
+              
+              <SignInput IconPng={Cadeado}
+              placeholder="Digite Sua Senha"
+              value={passwordField}
+              onChangeText={t=>setPasswordField(t)}
+              password={true}
+              />
+
+           <TouchableOpacity style={css.CustonButton} onPress={handleSignClick} >
+              <Text style={css.button__text}  >CADASTRAR</Text>
+           </TouchableOpacity> 
+           </View>
+
+           <TouchableOpacity  style={css.CustonMessageButton} onPress={handleMessageButtonClick} >
+            <Text style={css.TextCuston} >Já tem cadastro </Text>
+            <Text style={css.TextCustonBold} > Faça Login </Text>
+           </TouchableOpacity>
+
         </View>
+    
     );
 }
 
 
-18---AÇÃO do BOTÃO CADASTRA-SE (ir para tela de registro) e LOGIn na |TELA SignIn.js
+
+18---VAMOS PARA AÇÃO do BOTÃO CADASTRA-SE (ir para tela de registro) e LOGIn na |TELA SignIn.js
 --PARA NAVEGAR PRECISAMOS DO NAVIGATION --VAMOS IMPORTAR-LO
 import { useNavigation } from "@react-navigation/native";
 ---E CRIAR UMA VARIAVEL DE navegação
 
----VAmos Criar uma função para direcionar na tela SignIn.js (LOGIN) atraves do evento onpress
+---E CRIAR UM FUNÇÂO DE NAVEGAÇÂO 
+ //Função de NAVEGAÇÃO
+   const navigation = useNavigation();
+
+---VAmos Criar uma função para direcionar na tela SignIn.js (LOGIN) atraves do evento onpress do TouchableOpacity
  //Função de redirecionamento
 
         const handleSignClick= ()=> { 
@@ -760,7 +841,12 @@ import { useNavigation } from "@react-navigation/native";
         }
  
          const handleMessageButtonClick= ()=> { 
-            
+              
+             navigation.reset({ 
+               index:0,
+               routes:[{name: 'SignUp'}]
+                
+            });
          }
 
 -----Evento onpress
@@ -771,13 +857,420 @@ import { useNavigation } from "@react-navigation/native";
 
            <TouchableOpacity  style={css.CustonMessageButton} onPress={handleMessageButtonClick} >
 
----------           
+
+
+-------OBSERVAÇÂO --(tinha esquecido de empilha a TELA SignUp.js la em App.js no nos Stack)
+
+---EMPINHANDO apos importar a App.js FICA ASSIM:
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import Preload from "./barb/screens/preload";
+import SignIn from './barb/screens/SignIn';
+import SignUp from './barb/screens/SignUp';
+// IMPORTAT CONTEXT que ira  ENGLOBAR O APLICATIVO (NavigationContainer)
+import UserContextProfile from './barb/contexts/UserContext';
+
+export default function App() {
+  
+  //VAMOS Criar nossa PILHA que vai receber o retorno do createStackNavigator(pilha de navegação)
+    const Stack = createStackNavigator();
+
+
+//VAMOS Criar Container, o Navegador e as Telas de navegação ENGLOBADA PELO Context
+    return (
+     
+       <UserContextProfile>
+      <NavigationContainer>
+          <Stack.Navigator
+          initialRouteName="Preload" 
+         >
+          <Stack.Screen name="Preload" component={Preload}   options={{headerShown:false}}
+          // EXIBINDO uma tela Preload ---vai ficar um de cada vez (DEFINR A PRIMEIRA EM  <Stack.Navigator initialRouteName="Preload">)
+          />
+           <Stack.Screen name="SignIn" component={SignIn}   options={{headerShown:false}}/>
+           <Stack.Screen name="SignUp" component={SignUp}   options={{headerShown:false}}/>
+          </Stack.Navigator>
+      </NavigationContainer>
+
+   </UserContextProfile>
+    );
+}
+
+----A PAGINA SignIn.js FICARÁ ASSIM ---com o redirecionamento 
+---MUDEI O nome da fuction para (Login)
+
+import React, {useState, useEffect} from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import css from '../assets/css/Css'
+import SignInput from "../../componentes/SignInput";
+import { useNavigation } from "@react-navigation/native";
+
+import Envelope from "../assets/images/Envelope.png";
+import Cadeado from  "../assets/images/Cadeado.png";
+
+
+export  default  function Login(){
+
+
+   //Função de NAVEGAÇÃO
+   const navigation = useNavigation();
+
+
+   //Função de state
+      const [emailField, setEmailField] = useState('');
+      const [passwordField, setPasswordField] = useState('');
+
+      
+   //Função de redirecionamento
+
+        const handleSignClick= ()=> { 
+
+        }
+
+   
+         const handleMessageButtonClick = ()=> { 
+              // // NAVEGAR POR ROUTER (reset - não deixa voltar)
+              navigation.reset({ 
+                index:0,
+               routes:[{name: 'SignUp'}]
+                
+            });
+           /**/ 
+         /*
+             onPress= ('SignUp')
+                onPress={()=>{navigation.navigate("SignUp")}}  
+                  navigation.navigate('SignUp');
+         */
+
+         }
+ 
+    return(
+      
+      <View style={css.headerdois}>
+      
+         <Image style={css.header__img} source={require('../assets/images/barber.png')} />
+       
+         <View style={css.inputArea}>
+         
+             <SignInput IconPng={Envelope}
+             placeholder="Digite seu Email"
+             value={emailField}
+             onChangeText={t=>setEmailField(t)}
+             /> 
+              
+              <SignInput IconPng={Cadeado}
+              placeholder="Digite Sua Senha"
+              value={passwordField}
+              onChangeText={t=>setPasswordField(t)}
+              password={true}
+              />
+
+           <TouchableOpacity style={css.CustonButton} onPress={handleSignClick} >
+              <Text style={css.button__text}  >Login</Text>
+           </TouchableOpacity> 
+           </View>
+
+           <TouchableOpacity  style={css.CustonMessageButton}    onPress={handleMessageButtonClick}    >
+            <Text style={css.TextCuston} > Ainda sem cadastro </Text>
+            <Text style={css.TextCustonBold} > Cadastre-se </Text>
+           </TouchableOpacity>
+
+        </View>
+    
+    );
+}
+
+
+--------Ok PERFEITO (assim redirecionou para cadastro)   poderia ter feito
+pelo onPress={()=>{navigation.navigate("SignUp")} no TouchableOpacity
+
+19-----VAMOS COMEÇAR A FAZER REQUISIÇÕES
+------- CRIAR UM DIRETORIO em barb\Api.js e CRIAR UMA API
+
+const BASE_API = 'https://api.b7web.com.br/devbarber/api';
+//OBJETO QUE VAI TER AS AÇÕES QUE VAMOS PRECISAR FAZER
+
+// TOKEN
+
+export default{
+ CkeckToken: async (token)=> {
+
+    const req = await fetch(`${BASE_API}/auth/refresh`, {
+        method:'POST',
+            headers: {
+                    accept: 'application/json',
+                    'Content-Type': 'application/json',
+               },
+       //CONTEUDO que estou enviando
+       body: JSON.stringify ( {token} )
+
+    });
+    const json = await req.json();
+    return json;
+
+
+    },
+
+    // LOGIN
+
+     // RECEBER um email e uma Senha aqui
+    signIn: async (email, password)=> {
+        console.log("URL", `${BASE_API}/auth/login` );
+        console.log("email", email );
+        console.log("password" , password);
+        const req = await fetch(`${BASE_API}/auth/login`, {
+                method:'POST',
+                headers: {
+                    accept: 'application/json',
+                    'Content-Type': 'application/json',
+               },
+               //CONTEUDO que estou enviando
+               body: JSON.stringify ( {email, password} )
+
+            });
+            const json = await req.json();
+            return json;
+    },
+ // CADASTRO
+    signUp: async (name, email, password)=> {
+        console.log("name", name );
+        console.log("email", email );
+        console.log("password" , password);
+        const req = await fetch(`${BASE_API}/auth/user`, {
+            method:'POST',
+               headers: {
+                    accept: 'application/json',
+                    'Content-Type': 'application/json',
+               },
+           //CONTEUDO que estou enviando
+           body: JSON.stringify ( {name, email, password} )
+
+        });
+        const json = await req.json();
+        return json;
+    },
+};
+
+---TEsTAR NO SITE e cria ussuario de teste (https://resttesttest.com/) NO metodo POST
+nane Paulo
+ email paulo@gmail.com
+  password 1234
+
+
+ ------PARA USAR AS REQUISIÇÕES IMPORTAMOS E COLOCAMOS NA TELAS
+
+20 ---TELA DE LOGIN (SignIn.js)
+import Api from '../../Api';
+------
+
+
+import React, {useState, useEffect} from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import css from '../assets/css/Css'
+import SignInput from "../../componentes/SignInput";
+import { useNavigation } from "@react-navigation/native";
+import Api from '../Api';
+
+
+import Envelope from "../assets/images/Envelope.png";
+import Cadeado from  "../assets/images/Cadeado.png";
+
+
+export  default  function Login(){
+
+
+   //Função de NAVEGAÇÃO
+   const navigation = useNavigation();
+
+
+   //Função de state
+      const [emailField, setEmailField] = useState('');
+      const [passwordField, setPasswordField] = useState('');
+
+      
+   //Função de redirecionamento
+
+        const handleSignClick = async ()=> { 
+            // Se apertou botao de login verifivar se colocou email e senha
+            if(emailField !== '' && passwordField !== '' ) {
+               // RECEBER A RESPOSTA (podia ser let res)
+               let json = await Api.signIn(emailField, passwordField );
+               console.log(json);
+               // Verifica A RESPOSTA
+               if (json.token){
+                  alert('DEU CERTO');
+
+               }else{
+                  alert('Email e ou senha errado');
+               }
+
+            }else{
+               alert ('Preencha os campos');
+
+            }
+        }
+
+   
+         const handleMessageButtonClick = ()=> { 
+              // // NAVEGAR POR ROUTER (reset - não deixa voltar)
+              navigation.reset({ 
+                index:0,
+               routes:[{name: 'SignUp'}]
+                
+            });
+         }
+ 
+    return(
+      
+      <View style={css.headerdois}>
+      
+         <Image style={css.header__img} source={require('../assets/images/barber.png')} />
+       
+         <View style={css.inputArea}>
+         
+             <SignInput IconPng={Envelope}
+             placeholder="Digite seu Email"
+             value={emailField}
+             onChangeText={t=>setEmailField(t)}
+             /> 
+              
+              <SignInput IconPng={Cadeado}
+              placeholder="Digite Sua Senha"
+              value={passwordField}
+              onChangeText={t=>setPasswordField(t)}
+              password={true}
+              />
+
+           <TouchableOpacity style={css.CustonButton} onPress={handleSignClick} >
+              <Text style={css.button__text}  >Login</Text>
+           </TouchableOpacity> 
+           </View>
+
+           <TouchableOpacity  style={css.CustonMessageButton}    onPress={handleMessageButtonClick}    >
+            <Text style={css.TextCuston} > Ainda sem cadastro </Text>
+            <Text style={css.TextCustonBold} > Cadastre-se </Text>
+           </TouchableOpacity>
+
+        </View>
+    
+    );
+}
+
+21----- ---TELA DE CADASTRO (SignUp.js)
+import Api from '../../Api';
+------
+
+import React, {useState, useEffect} from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import css from '../assets/css/Css'
+import SignInput from "../../componentes/SignInput";
+import { useNavigation } from "@react-navigation/native";
+import Api from '../Api';
+
+import Envelope from "../assets/images/Envelope.png";
+import Cadeado from  "../assets/images/Cadeado.png";
+
+
+export  default  function App2(){
+
+ 
+
+   //Função de NAVEGAÇÃO
+   const navigation=useNavigation();
+
+
+   //Função de state
+      const [nameField, setNameField] = useState('');
+      const [emailField, setEmailField] = useState('');
+      const [passwordField, setPasswordField] = useState('');
+
+      
+   //Função de redirecionamento
+
+        const handleSignClick =  async()=> { 
+         if(nameField !== '' && emailField !== '' && passwordField !== '' ) {
+            // RECEBER A RESPOSTA (podia ser let res)
+            let res = await Api.signUp(nameField, emailField, passwordField );
+            console.log(res);
+            // Verifica A RESPOSTA
+            if (res.token){
+               alert('DEU CERTO');
+
+            }else{
+               alert("Erro :"+res.error);
+            }
+
+         }else{
+            alert ('Preencha os campos');
+
+         }
+        }
+
+   
+         const handleMessageButtonClick = ()=> { 
+             // NAVEGAR POR ROUTER
+            //navigation.navigate('SignUp');
+          // handleMessageButtonClick();
+             navigation.navigate({ 
+               routes:[{name: 'SignIn'}]
+            });
+           /*
+            onPress= ()=>{SignUp}  
+                
+           onPress={()=>{navigation.navigate("Home")}}  */
+         }
+
+    return(
+      
+      <View style={css.headerdois}>
+      
+         <Image style={css.header__img} source={require('../assets/images/barber.png')} />
+       
+         <View style={css.inputArea}>
+
+            <SignInput IconPng={Envelope}
+             placeholder="Digite seu Nome"
+             value={nameField}
+             onChangeText={t=>setNameField(t)}
+             /> 
+
+             <SignInput IconPng={Envelope}
+             placeholder="Digite seu Email"
+             value={emailField}
+             onChangeText={t=>setEmailField(t)}
+             /> 
+              
+              <SignInput IconPng={Cadeado}
+              placeholder="Digite Sua Senha"
+              value={passwordField}
+              onChangeText={t=>setPasswordField(t)}
+              password={true}
+              />
+
+           <TouchableOpacity style={css.CustonButton} onPress={handleSignClick} >
+              <Text style={css.button__text}  >CADASTRAR</Text>
+           </TouchableOpacity> 
+           </View>
+
+           <TouchableOpacity  style={css.CustonMessageButton} onPress={handleMessageButtonClick} >
+            <Text style={css.TextCuston} >Já tem cadastro </Text>
+            <Text style={css.TextCustonBold} > Faça Login </Text>
+           </TouchableOpacity>
+
+        </View>
+    
+    );
+}
+
+
+---OK PERFEITO (funcionou apenas com messagem , vamos entrar na telas de verdade)
 
 
 
+22----SALVAR O TOKEM
 
-
-
+1:59
 
 
 
