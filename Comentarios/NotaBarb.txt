@@ -994,7 +994,7 @@ const BASE_API = 'https://api.b7web.com.br/devbarber/api';
 // TOKEN
 
 export default{
- CkeckToken: async (token)=> {
+ ckeckToken: async (token)=> {
 
     const req = await fetch(`${BASE_API}/auth/refresh`, {
         method:'POST',
@@ -1268,9 +1268,681 @@ export  default  function App2(){
 
 
 
-22----SALVAR O TOKEM
+22----SALVAR O TOKEN tanto no SignIn e SignUp e MANDAR o usuario para navegagar ou voltar
+PRECISAMOS IMPORTAR NO AsyncStorage, 
+--Importar o AsyncStorage e o UserContext
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import UserContext from '../contexts/UserContext'
+----- CRIAR O DISPATCH (envio) para mandar informações para o Context
+//CRIAR DISPAPTCH (vou chamar de UserDispatch) PARA ENVIAR INFORMAÇÂO PARA O CONTEXT
+   //  const {dispatch: UserDispatch} = useContext(UserContext) ;
+      ------TIVE QUE MUDAR PARA dispatch POIS ESTAVA DANDO ERRO
+   //Função de NAVEGAÇÃO
+   const navigation = useNavigation();
 
-1:59
+---LA NO DEU "CERTO" 
+if (json.token){
+                 // alert('DEU CERTO');
+                     await AsyncStorage.setItem('token', json.token);
+                 // SALVAR TOKEN , pega ele e manda como json.token para AsyncStorage
+                     await AsyncStorage.setItem('token', json.token);
+                   //ALEM DO TOKEM TEMOS OUTRAS INFORMAÇÂO no (data), VAMOS MANDAR TAMBEM , ex:avatar para colocar no context
+                   //MANDAR INFORMAÇÔES PARA O CONTEXT ATRAVES DO dispatch
+                      //  UserDispatch ({   ------TIVE QUE MUDAR PARA dispatch POIS ESTAVA DANDO ERRO
+                      dispatch ({
+                      type: 'setAvatar', 
+                      payload:{
+                         avatar: jsom.data.avatar
+                      }
+                   });
+
+                    //JA DE POSSE E SALVO AS INFORMAÇÔES MANDAR O USUARIO PARA AS TELAS
+                    navigation.reset({
+                     routes:[{name: 'MainTab'}]
+                    });
+
+               }else{
+                  alert('Email e ou senha errado');
+               }
+
+            }else{
+               alert ('Preencha os campos');
+
+            }
+        }
+
+
+--------- A TELA signIn FICA ASSIM:
+
+import React, {useState, useContext} from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import css from '../assets/css/Css'
+import SignInput from "../../componentes/SignInput";
+import { useNavigation } from "@react-navigation/native";
+import Api from '../Api';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import UserContext from '../contexts/UserContext'
+
+
+import Envelope from "../assets/images/Envelope.png";
+import Cadeado from  "../assets/images/Cadeado.png";
+
+
+export  default  function Login(){
+
+   //CRIAR DISPAPTCH (vou chamar de UserDispatch) PARA ENVIAR INFORMAÇÂO PARA O CONTEXT
+    //  const {dispatch: UserDispatch} = useContext(UserContext) ;
+      ------TIVE QUE MUDAR PARA dispatch POIS ESTAVA DANDO ERRO
+      const dispatch = useContext(UserContext);
+   //Função de NAVEGAÇÃO
+   const navigation = useNavigation();
+
+
+   //Função de state
+      const [emailField, setEmailField] = useState('');
+      const [passwordField, setPasswordField] = useState('');
+
+      
+   //Função de redirecionamento
+
+        const handleSignClick = async ()=> { 
+            // Se apertou botao de login verifivar se colocou email e senha
+            if(emailField !== '' && passwordField !== '' ) {
+               // RECEBER A RESPOSTA (podia ser let res)
+               let json = await Api.signIn(emailField, passwordField );
+               console.log(json);
+               // Verifica A RESPOSTA
+               if (json.token){
+                 // alert('DEU CERTO');
+                     
+                 // SALVAR TOKEN , pega ele e manda como json.token para AsyncStorage
+                     await AsyncStorage.setItem('token', json.token);
+                   //ALEM DO TOKEM TEMOS OUTRAS INFORMAÇÂO no (data), VAMOS MANDAR TAMBEM , ex:avatar para colocar no context
+                   //MANDAR INFORMAÇÔES PARA O CONTEXT ATRAVES DO dispatch
+                   //  UserDispatch ({   ------TIVE QUE MUDAR PARA dispatch POIS ESTAVA DANDO ERRO
+                      dispatch ({
+                      type: 'setAvatar', 
+                      payload:{
+                         avatar: json.data.avatar
+                      }
+                   });
+
+                    //JA DE POSSE E SALVO AS INFORMAÇÔES MANDAR O USUARIO PARA AS TELAS
+                    navigation.reset({
+                     routes:[{name: 'MainTab'}]
+                    });
+
+               }else{
+                  alert('Email e ou senha errado');
+               }
+
+            }else{
+               alert ('Preencha os campos');
+
+            }
+        }
+
+   
+         const handleMessageButtonClick = ()=> { 
+              // // NAVEGAR POR ROUTER (reset - não deixa voltar)
+              navigation.reset({ 
+                index:0,
+               routes:[{name: 'SignUp'}]
+                
+            });
+         }
+ 
+    return(
+      
+      <View style={css.headerdois}>
+      
+         <Image style={css.header__img} source={require('../assets/images/barber.png')} />
+       
+         <View style={css.inputArea}>
+         
+             <SignInput IconPng={Envelope}
+             placeholder="Digite seu Email"
+             value={emailField}
+             onChangeText={t=>setEmailField(t)}
+             /> 
+              
+              <SignInput IconPng={Cadeado}
+              placeholder="Digite Sua Senha"
+              value={passwordField}
+              onChangeText={t=>setPasswordField(t)}
+              password={true}
+              />
+
+           <TouchableOpacity style={css.CustonButton} onPress={handleSignClick} >
+              <Text style={css.button__text}  >Login</Text>
+           </TouchableOpacity> 
+           </View>
+
+           <TouchableOpacity  style={css.CustonMessageButton}    onPress={handleMessageButtonClick}    >
+            <Text style={css.TextCuston} > Ainda sem cadastro </Text>
+            <Text style={css.TextCustonBold} > Cadastre-se </Text>
+           </TouchableOpacity>
+
+        </View>
+    
+    );
+}
+
+23- A TELA DO SignUp.js FAZ A MESMA COISA
+
+-----PRECISAMOS IMPORTAR NO AsyncStorage, e o UserContext
+
+---- CRIAR O DISPATCH (envio) para mandar informações para o Context
+
+-----E FAREMOS A MESMA COISA DO SignIn MUDANDOA APENAS UMA INFORMAçÂO (troca json por res)
+
+                 
+                 // SALVAR TOKEN , pega ele e manda como res.token para AsyncStorage
+                     await AsyncStorage.setItem('token', res.token);
+                   //ALEM DO TOKEM TEMOS OUTRAS INFORMAÇÂO no (data), VAMOS MANDAR TAMBEM , ex:avatar para colocar no context
+                   //MANDAR INFORMAÇÔES PARA O CONTEXT ATRAVES DO dispatch
+                   //  UserDispatch ({   ------TIVE QUE MUDAR PARA dispatch POIS ESTAVA DANDO ERRO
+                      dispatch ({
+                      type: 'setAvatar', 
+                      payload:{
+                         avatar: res.data.avatar
+                      }
+                   });
+
+                    //JA DE POSSE E SALVO AS INFORMAÇÔES MANDAR O USUARIO PARA AS TELAS
+                    navigation.reset({
+                     routes:[{name: 'MainTab'}]
+                    });
+
+---A TELA DO SignUp.js FICA ASSIM:
+
+import React, {useState, useEffect, useContext} from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import css from '../assets/css/Css'
+import SignInput from "../../componentes/SignInput";
+import { useNavigation } from "@react-navigation/native";
+import Api from '../Api';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import UserContext from '../contexts/UserContext'
+
+import Envelope from "../assets/images/Envelope.png";
+import Cadeado from  "../assets/images/Cadeado.png";
+
+
+export  default  function App2(){
+
+ 
+    //CRIAR DISPAPTCH (vou chamar de UserDispatch) PARA ENVIAR INFORMAÇÂO PARA O CONTEXT
+     //  const {dispatch: UserDispatch} = useContext(UserContext) ;
+      ------TIVE QUE MUDAR PARA dispatch POIS ESTAVA DANDO ERRO
+      const dispatch = useContext(UserContext);
+   //Função de NAVEGAÇÃO
+   const navigation=useNavigation();
+
+
+   //Função de state
+      const [nameField, setNameField] = useState('');
+      const [emailField, setEmailField] = useState('');
+      const [passwordField, setPasswordField] = useState('');
+
+      
+   //Função de redirecionamento
+
+        const handleSignClick =  async()=> { 
+         if(nameField !== '' && emailField !== '' && passwordField !== '' ) {
+            // RECEBER A RESPOSTA (podia ser let res)
+            let res = await Api.signUp(nameField, emailField, passwordField );
+            console.log(res);
+            // Verifica A RESPOSTA
+            if (res.token){
+               //alert('DEU CERTO');
+             
+               // SALVAR TOKEN , pega ele e manda como json.token para AsyncStorage
+                   await AsyncStorage.setItem('token', res.token);
+                 //ALEM DO TOKEM TEMOS OUTRAS INFORMAÇÂO no (data), VAMOS MANDAR TAMBEM , ex:avatar para colocar no context
+                 //MANDAR INFORMAÇÔES PARA O CONTEXT ATRAVES DO dispatch
+                //  UserDispatch ({   ------TIVE QUE MUDAR PARA dispatch POIS ESTAVA DANDO ERRO
+                      dispatch ({
+                    type: 'setAvatar', 
+                    payload:{
+                       avatar: res.data.avatar
+                    }
+                 });
+
+                  //JA DE POSSE E SALVO AS INFORMAÇÔES MANDAR O USUARIO PARA AS TELAS
+                  navigation.reset({
+                   routes:[{name: 'MainTab'}]
+                  });
+
+            }else{
+               alert("Erro :"+res.error);
+            }
+
+         }else{
+            alert ('Preencha os campos');
+
+         }
+        }
+
+   
+         const handleMessageButtonClick = ()=> { 
+             // NAVEGAR POR ROUTER
+            //navigation.navigate('SignUp');
+          // handleMessageButtonClick();
+             navigation.navigate({ 
+               routes:[{name: 'SignIn'}]
+            });
+           /*
+            onPress= ()=>{SignUp}  
+                
+           onPress={()=>{navigation.navigate("Home")}}  */
+         }
+
+    return(
+      
+      <View style={css.headerdois}>
+      
+         <Image style={css.header__img} source={require('../assets/images/barber.png')} />
+       
+         <View style={css.inputArea}>
+
+            <SignInput IconPng={Envelope}
+             placeholder="Digite seu Nome"
+             value={nameField}
+             onChangeText={t=>setNameField(t)}
+             /> 
+
+             <SignInput IconPng={Envelope}
+             placeholder="Digite seu Email"
+             value={emailField}
+             onChangeText={t=>setEmailField(t)}
+             /> 
+              
+              <SignInput IconPng={Cadeado}
+              placeholder="Digite Sua Senha"
+              value={passwordField}
+              onChangeText={t=>setPasswordField(t)}
+              password={true}
+              />
+
+           <TouchableOpacity style={css.CustonButton} onPress={handleSignClick} >
+              <Text style={css.button__text}  >CADASTRAR</Text>
+           </TouchableOpacity> 
+           </View>
+
+           <TouchableOpacity  style={css.CustonMessageButton} onPress={handleMessageButtonClick} >
+            <Text style={css.TextCuston} >Já tem cadastro </Text>
+            <Text style={css.TextCustonBold} > Faça Login </Text>
+           </TouchableOpacity>
+
+        </View>
+    
+    );
+}
+
+
+24 ---SE RODAR E FAZER LOGIN COM O NOSSO USUURIO TESTE CRIADO LA NO REST tetstest DA 
+API_BASE (https://api.b7web.com.br/devbarber/api------- paulo@gmail.com ---1234) 
+E DEPOIS TENTAR ELE DEVE APRESENTAR UMA ERRO, FICANDO RODANDO NA TELA DE PRELOAD ,(OK FOI O QUE ACONTECEU )
+TEREMOS QUE VALIDAR O TOKEM NO PRELOAD COMO TAMBEM  CRIAMOS A TELA (Mainytab).
+
+
+----
+
+25---VALIDAR TOKEN NO preload.js
+
+---IMPORTAR api.js
+import Api from '../Api';
+import UserContext from '../contexts/UserContext'
+
+-- //CRIAR DISPAPTCH (vou chamar de UserDispatch) PARA ENVIAR INFORMAÇÂO PARA O CONTEXT
+     //  const {dispatch: UserDispatch} = useContext(UserContext) ;
+      ------TIVE QUE MUDAR PARA dispatch POIS ESTAVA DANDO ERRO
+      const dispatch = useContext(UserContext);
+
+-----------E FAREMOS A MESMA COISA DO SignIn MUDANDOA APENAS UMA INFORMAçÂO (troca json por res)
+
+                 
+                 // SALVAR TOKEN , pega ele e manda como res.token para AsyncStorage
+                     await AsyncStorage.setItem('token', res.token);
+                   //ALEM DO TOKEM TEMOS OUTRAS INFORMAÇÂO no (data), VAMOS MANDAR TAMBEM , ex:avatar para colocar no context
+                   //MANDAR INFORMAÇÔES PARA O CONTEXT ATRAVES DO dispatch
+                   //  UserDispatch ({   ------TIVE QUE MUDAR PARA dispatch POIS ESTAVA DANDO ERRO
+                      dispatch ({
+                      type: 'setAvatar', 
+                      payload:{
+                         avatar: res.data.avatar
+                      }
+                   });
+
+                    //JA DE POSSE E SALVO AS INFORMAÇÔES MANDAR O USUARIO PARA AS TELAS
+                    navigation.reset({
+                     routes:[{name: 'MainTab'}]
+                    });
+
+-------TELA DE Preload.js FICA ASSIM:
+import React, {useEffect, useContext} from "react";
+import { StyleSheet,  View, Text, TouchableOpacity, loadingIcon, Image} from 'react-native';
+import css, {LoadingIcon} from '../assets/css/Css'
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+import Api from '../Api';
+import UserContext from '../contexts/UserContext'
+//import {  Container, LoadingIcon } from './styles'
+//import Cadastro from "./Cadastro";
+//import MainStack from "../stacks/MainStack";
+import MainTab from "../stacks/MainTab";
+
+
+
+// RECEBE como paramentro o navigation
+export default ()=> {
+
+  //CRIAR DISPAPTCH (vou chamar de UserDispatch) PARA ENVIAR INFORMAÇÂO PARA O CONTEXT
+  const dispatch = useContext(UserContext);
+
+//VAmos criar uma variavel
+const navigation=useNavigation();
+
+
+// TODA VEZ QUE A TELA ABRIR EXECUTE ESSE CODIGO
+useEffect(()=>{
+//Verificar token
+  const checkToken= async ()=>{
+        //Pegar um token se exixtir no aplicativo
+         const token = await AsyncStorage.getItem('token');
+        
+      //  if(token !== null){
+            // OU ASSIM
+            if(token ){
+           // Se não for nulo (se existir) VALIDAR token
+            // MANDA TOKEM
+           let res = await Api.ckeckToken (token);
+           // SE FUNCIONAR ELE VAI ME MANDAR O CONFIRMAR O TOKEN 
+           // VAMOS VERIFICAR ESSE TOKEN
+           if (res.token){
+             // SE DEU CERTO 
+              // SALVAR OU VALIDAR TOKEN , pega ele e manda como json.token para AsyncStorage
+              await AsyncStorage.setItem('token', res.token);
+              //ALEM DO TOKEM TEMOS OUTRAS INFORMAÇÂO no (data), VAMOS MANDAR TAMBEM , ex:avatar para colocar no context
+              //MANDAR INFORMAÇÔES PARA O CONTEXT ATRAVES DO dispatch
+              /*
+              dispatch({
+                        type: 'setAvatar',
+                        payload:{
+                            avatar: res.data.avatar
+                        }
+                    });*/
+
+               //JA DE POSSE E SALVO AS INFORMAÇÔES MANDAR O USUARIO PARA AS TELAS
+               navigation.reset({
+                routes:[{name:'MainTab'}]
+            });
+
+
+           }else{
+              navigation.navigate('SignIn');
+              } 
+
+
+        }else{
+            //Se não tiver Token Manda para o login
+             navigation.navigate('SignIn');
+        }
+  }
+//Executar
+  checkToken();
+
+}, [])
+
+
+  return (
+      <View style={css.container}>
+
+          <View style={css.header}>
+              <Image style={css.header__img} source={require('../assets/images/barber.png')} />
+              <LoadingIcon size="large" color="#FFFFFF" />
+              
+          </View>
+
+          
+      </View>
+  );
+}
+
+26-----FAZER OUTRA TELAS
+---INSTALAR bottom-tabs 
+# npm install @react-navigation/bottom-tabs  
+ --IMPORTAR createBottomTabNavigator
+
+----A TELA (stack) MainTab.js FICA ASSIM:
+
+import React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
+
+const Tab = createBottomTabNavigator();
+
+export default () => (
+
+    <Tab.Navigator>
+         <Tab.Screen   name="Home"   component={Home}  /* tem que criar esse componente  */ />
+         <Tab.Screen   name="Search"   component={Search}/>
+         <Tab.Screen   name="Appointments"   component={Appointments}/>
+         <Tab.Screen   name="Favorites"   component={Favorites}/>
+         <Tab.Screen   name="Profile"   component={Profile}/>
+
+
+
+    </Tab.Navigator>
+)
+
+
+27---CRIAR A TELA Home e as outras na pasta screns (tudo junto)
+import React from 'react'
+import { Text, View } from 'react-native'
+import css from '../assets/css/Css'
+
+export default () => {
+
+    return (
+
+    <View style = {css.container}>
+        <Text>
+            Home        
+        </Text>
+
+    </View>
+
+    );
+
+}
+
+---TODAS OUTRA SERÃO IDENTICAR MUDANDO SOMENTE O texto
+-----DEPOIS DE CRIADA, VAMOS IMPORTAR_LAS PARA MainTab
+import React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
+import Home from '../screens/Home';
+import Search from '../screens/Search';
+import Appointments from '../screens/Appointments';
+import Favorites from '../screens/Favorites';
+import Profile from '../screens/Profile';
+
+
+
+const Tab = createBottomTabNavigator();
+
+export default () => (
+
+    <Tab.Navigator>
+         <Tab.Screen   name="Home"   component={Home}  /* tem que criar esse componente  */ />
+         <Tab.Screen   name="Search"   component={Search}/>
+         <Tab.Screen   name="Appointments"   component={Appointments}/>
+         <Tab.Screen   name="Favorites"   component={Favorites}/>
+         <Tab.Screen   name="Profile"   component={Profile}/>
+
+
+
+    </Tab.Navigator>
+)
+
+28---VAMOS FAZER UM LINK DESSE MainTab com o MainStack
+
+---NA TELA MainStack  IMPORTAR o MainTab e cria uma rota para ele
+---A TELA MainStack.js FICA ASSIM:
+import React from "react";
+import { createStackNavigator } from "@react-navigation/stack";
+//import { StackActions } from "@react-navigation/routers";
+
+//VAMOS Criar nossa PILHA que vai receber o retorno do createStackNavigator(pilha de navegação)
+const Stack=createStackNavigator();
+
+// IMPORTAR AS TELAS PARA SEREM USADAS NA PILHA
+import Preload from '../screens/Preload';
+import SignIn from '../screens/SignIn';
+import SignUp from '../screens/SignIn';
+
+import MainTab from "./MainTab";
+
+export default ()=>{
+
+  return (
+    //VAMOS Criar uma pilha de telas (As que usaremos nessa pilha)
+  <Stack.Navigator>
+               <Stack.Screen  // EXIBINDO uma tela Preload ---vai ficar um de cada vez (DEFINR A PRIMEIRA EM  <Stack.Navigator initialRouteName="Preload">)
+                name="Preload"
+                component={Preload}  // tem que criar esse componente
+                options={{title:'Tela inicial'}}
+                />
+
+                <Stack.Screen   name="SignIn"   component={SignIn}  /* tem que criar esse componente  */   options={{title:'Tela signInl'}} />
+                <Stack.Screen   name="SignUp"   component={SignUp}  /* tem que criar esse componente  */   options={{title:'Tela signUpl'}} />   
+                <Stack.Screen   name="MainTab"   component={MainTab}   />   
+
+  </Stack.Navigator>
+  );
+}
+
+29-----E NA TELA App.js FAZ o IMPORT DA MainTab e COLOCAMOS NA PILHA
+---App;js FICA ASSIM :
+
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import Preload from "./barb/screens/preload";
+import SignIn from './barb/screens/SignIn';
+import SignUp from './barb/screens/SignUp';
+// IMPORTAT CONTEXT que ira  ENGLOBAR O APLICATIVO (NavigationContainer)
+import UserContextProfile from './barb/contexts/UserContext';
+import MainTab from './barb/stacks/MainTab';
+
+
+export default function App() {
+  
+  //VAMOS Criar nossa PILHA que vai receber o retorno do createStackNavigator(pilha de navegação)
+    const Stack = createStackNavigator();
+
+
+//VAMOS Criar Container, o Navegador e as Telas de navegação ENGLOBADA PELO Context
+    return (
+     
+       <UserContextProfile>
+      <NavigationContainer>
+          <Stack.Navigator
+          initialRouteName="Preload" 
+         >
+          <Stack.Screen name="Preload" component={Preload}   options={{headerShown:false}}
+          // EXIBINDO uma tela Preload ---vai ficar um de cada vez (DEFINR A PRIMEIRA EM  <Stack.Navigator initialRouteName="Preload">)
+          />
+           <Stack.Screen name="SignIn" component={SignIn}   options={{headerShown:false}}/>
+           <Stack.Screen name="SignUp" component={SignUp}   options={{headerShown:false}}/>
+           <Stack.Screen name="MainTab" component={MainTab}   options={{headerShown:false}}/>
+          </Stack.Navigator>
+      </NavigationContainer>
+
+   </UserContextProfile>
+    );
+}
+
+--OK PERFEITO DEU CERTO
+
+---OBSERVAÇÕES ----Temos que ver o dispatch (não funcionou)
+
+30---TEMOS QUE INSTALAR O styled-component (Ja deviamos ter instalado antes)
+
+# npm install --save styled-components
+
+------------
+
+31------VAMOS FAZER UM compomenmtes CUSTOTABBAR.JS No diretorio componentes
+---IMPORTAR import styled from "styled-components/native"; que acabamos de Instalar
+---O COMPONENTES FICA ASSIM POR ENQUANTO (vazio)
+import React from "react";
+import styled  from 'styled-components';
+
+//CRIAR UMA SACOLA (textarea) estilizada
+const TabArea = styled.view`
+height: 60px;
+background-color: #4EADBE;
+flex-direction: row;
+`;
+
+export default () => {
+  
+    return (
+        //CRIA NOSSO COMPONENTE TABAREA
+        <TabArea>
+
+
+        </TabArea>
+
+    );
+}
+
+
+32------VAMOS IMPORTA ELE LA PARA O MainTab e MANDAR USAR-LO PASSANDO AS PROPRIEDADE PARA 
+O COMPONETEN QUE VAI RECEBER-LO
+---VAMOS LA NO MainTab.js E FICA ASSIM:  (escondeu a navegação, mas vamos edtilizar a nosso modo)
+import React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
+import Home from '../screens/Home';
+import Search from '../screens/Search';
+import Appointments from '../screens/Appointments';
+import Favorites from '../screens/Favorites';
+import Profile from '../screens/Profile';
+
+import CustomTabBar from "../../componentes/CustomTabBar";
+
+
+const Tab = createBottomTabNavigator();
+
+export default () => (
+/* importa o TabArea e usa ele passando as propriedade (props)  */
+    <Tab.Navigator tabBar={props=><CustomTabBar {...props} />}>
+         <Tab.Screen   name="Home"   component={Home}  /* tem que criar esse componente  */ />
+         <Tab.Screen   name="Search"   component={Search}/>
+         <Tab.Screen   name="Appointments"   component={Appointments}/>
+         <Tab.Screen   name="Favorites"   component={Favorites}/>
+         <Tab.Screen   name="Profile"   component={Profile}/>
+
+
+
+    </Tab.Navigator>
+)
+
+-----ESCONDEU A NAVEGAÇÃO
+
+33-----VAMOS COLOCAR OS ITENS NO TABAREA  (Cinco itens)
+
+
+
+------- 1:58 - 2:17
+
+
+
+
 
 
 
@@ -1306,7 +1978,7 @@ XXXXXXXXXX VOLTAR E COLOCAR return
 # npm install react-native-gesture-handler  
 # npm install @react-native-community/masked-view  ---PULEI ESSA
 
-# npm install @react-navigation/bottom-tabs  
+
 # npm install @react-navigation/drawer
 ---PRIMEIRA TEMOS QUE INSTALAR A DEPENDENCIA DO AsyncStorage
 
