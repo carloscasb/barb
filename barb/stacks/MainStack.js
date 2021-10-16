@@ -6,9 +6,11 @@ import { createStackNavigator } from "@react-navigation/stack";
 const Stack=createStackNavigator();
 
 // IMPORTAR AS TELAS PARA SEREM USADAS NA PILHA
-import Preload from '../screens/Preoload';
+import Preload from '../screens/Preload';
 import SignIn from '../screens/SignIn';
 import SignUp from '../screens/SignIn';
+
+import MainTab from "./MainTab";
 
 export default ()=>{
 
@@ -22,7 +24,9 @@ export default ()=>{
                 />
 
                 <Stack.Screen   name="SignIn"   component={SignIn}  /* tem que criar esse componente  */   options={{title:'Tela signInl'}} />
-                <Stack.Screen   name="SignUp"   component={SignUp}  /* tem que criar esse componente  */   options={{title:'Tela signUpl'}} />       
+                <Stack.Screen   name="SignUp"   component={SignUp}  /* tem que criar esse componente  */   options={{title:'Tela signUpl'}} />   
+                <Stack.Screen   name="MainTab"   component={MainTab}   />   
+
   </Stack.Navigator>
   );
 }
