@@ -1901,7 +1901,7 @@ export default () => {
 }
 
 
-32------VAMOS IMPORTA ELE LA PARA O MainTab e MANDAR USAR-LO PASSANDO AS PROPRIEDADE PARA 
+32------VAMOS IMPORTA ELE (CustomTabBar) LA PARA O MainTab e MANDAR USAR-LO PASSANDO AS PROPRIEDADE PARA 
 O COMPONETEN QUE VAI RECEBER-LO
 ---VAMOS LA NO MainTab.js E FICA ASSIM:  (escondeu a navegação, mas vamos edtilizar a nosso modo)
 import React from "react";
@@ -1934,11 +1934,418 @@ export default () => (
 
 -----ESCONDEU A NAVEGAÇÃO
 
-33-----VAMOS COLOCAR OS ITENS NO TABAREA  (Cinco itens)
+33-----VAMOS COLOCAR OS ITENS NO TABAREA do CustomTabBar (Cinco itens) - PARA FAZER A NAVEGAÇÃO POR ELES
+------IMPORTAR ICON (as imagens ) no CustomTabBar
+---CRIAR COMPONENTES ESTILIZADAS (TabArea, TabItem)
+//CRIAR UMA SACOLA (textarea) estilizada
+const TabArea = styled.View`
+height: 60px;
+background-color: #4EADBE;
+flex-direction: row;
+`;
+
+const TabItem = styled.TouchableOpacity`
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+   
+`;
+
+---E COLOCAR OS ITEM 
+export default () => {
+  
+    return (
+        //CRIA NOSSO COMPONENTE TABAREA e colocar item
+        <TabArea>
+           
+            <TabItem>
+            <Text>Today</Text>
+            </TabItem>
+
+            <TabItem>
+           <Text>Today</Text>
+            </TabItem>
+
+            <TabItem>
+           <Text>Favorite</Text>
+            </TabItem>
+
+            <TabItem>
+           <Text>Account</Text>
+            </TabItem>
+            <TabItem>
+           <Text>Appointments</Text>
+            </TabItem>
+        </TabArea>
+
+    );
+}
+
+-----A NOSSA CustomTabBar FICA ASSIM:   ---NÃO CONSEGUI COLOCAR OS Icons ----NÃO CONSEGUIR ************ (importar nem os icon e nem o UserContext)
+
+import React from "react";
+import { Image, Text } from "react-native";
+import styled  from 'styled-components';
+//IMPORTAR ICON
+/*
+import HomeIcon from '../assets/images/cadeado.png';
+
+import SearchIcon from '.../assets/search.svg';
+import TodayIcon from '../assets/today.svg';
+import FavoriteIcon from '../assets/favorite.svg';
+import AccountIcon from '../assets/images/user.png';
+<HomeIcon width="24"  heigth="24" fill='#fff'  />
+<Image style={{width:"24" , heigth:"24", fill:'#fff'}} source={require('././assets/images/today.png')} />
+import HomeIcon from '../../assets/images/Home.png';
+*/
+
+//CRIAR UMA SACOLA (textarea) estilizada
+const TabArea = styled.View`
+height: 60px;
+background-color: #4EADBE;
+flex-direction: row;
+`;
+
+const TabItem = styled.TouchableOpacity`
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+   
+`;
+
+
+export default () => {
+  
+    return (
+        //CRIA NOSSO COMPONENTE TABAREA e colocar item
+        /*
+         ERA PARA SER ASSIM OS ITEM COM ICON
+         import HomeIcon from '../../assets/images/Home.png';
+         <TabItem>
+                 <HomeIcon />
+            </TabItem>
+        */
+        <TabArea>
+           
+           
+            <TabItem>
+            <Text>Home</Text>
+            </TabItem>
+
+            <TabItem>
+           <Text>Today</Text>
+            </TabItem>
+
+            <TabItem>
+           <Text>Favorite</Text>
+            </TabItem>
+
+            <TabItem>
+           <Text>Account</Text>
+            </TabItem>
+            <TabItem>
+           <Text>Appointments</Text>
+            </TabItem>
+        </TabArea>
+
+    );
+}
+
+
+-----------------VAMOS SEGUIR
+
+34------VAMOS FAZER AS AÇÕES DE CADA UM COM onPress (ERA PARA SSER COM OS ICONS)
+ ---ANTES VAMOS FAZER UMA FUNÇÂO DE NAVAGAR (goto)
+ --- //CRIA  FUNÇÃO DE NAVEGAÇÃO goto e a USA LA EM onPress
+---MAS AGORA A NOSSA FUNÇÂO PRINCIPAL VAI RECEBER DUAS props (PROPRIEDADE state e navigation)
+
+-----A CustomTabBar FICA ASIM JA NAVEGANDO ENTRE AS TELAS (UMA PENA - faltan o icon)
+import React from "react";
+import { Image, Text } from "react-native";
+import styled  from 'styled-components';
+//IMPORTAR ICON
+/*
+import HomeIcon from '../assets/images/cadeado.png';
+
+import SearchIcon from '.../assets/search.svg';
+import TodayIcon from '../assets/today.svg';
+import FavoriteIcon from '../assets/favorite.svg';
+import AccountIcon from '../assets/images/user.png';
+<HomeIcon width="24"  heigth="24" fill='#fff'  />
+<Image style={{width:"24" , heigth:"24", fill:'#fff'}} source={require('././assets/images/today.png')} />
+import HomeIcon from '../../assets/images/Home.png';
+*/
 
 
 
-------- 1:58 - 2:17
+//CRIAR UMA SACOLA (textarea) estilizada
+const TabArea = styled.View`
+height: 60px;
+background-color: #4EADBE;
+flex-direction: row;
+`;
+
+const TabItem = styled.TouchableOpacity`
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+   
+`;
+
+
+export default ({state, navigation}) => {
+  
+     //CRIA  FUNÇÃO DE NAVEGAÇÃO goto e a USA LA EM onPress
+
+     const goTo = (screenName) => {
+            navigation.navigate(screenName);
+
+
+     }
+      
+    return (
+        //CRIA NOSSO COMPONENTE TABAREA e colocar item
+        /*
+         ERA PARA SER ASSIM OS ITEM COM ICON
+         import HomeIcon from '../../assets/images/Home.png';
+         <TabItem>
+                 <HomeIcon />
+            </TabItem>
+        */
+        <TabArea>
+           
+           
+            <TabItem onPress={()=>goTo('Home')}>
+            <Text>Home</Text>
+            </TabItem>
+
+             <TabItem onPress={()=>goTo('Search')}>
+           <Text>Search</Text>
+            </TabItem>
+
+            <TabItem onPress={()=>goTo('Appointments')}>
+           <Text>Appointments</Text>
+            </TabItem>
+
+           <TabItem onPress={()=>goTo('Favorites')}>
+           <Text>Favorite</Text>
+            </TabItem>
+
+            <TabItem onPress={()=>goTo('Profile')}>
+           <Text>Account</Text>
+            </TabItem>
+            
+        </TabArea>
+
+    );
+}
+
+
+35-----VAMOS FAZER UM EFEITO CO A OPACIDADE DO ITEM
+----SE O STATE (state.index===0) QUE TIVER ATIVADO A OPACIDADE VAI SER 1 DO CONTRARIO VAI SER 0,5
+---O ZERO É A POSIÇÂO DO State (ITEM)
+
+          <TabItem onPress={()=>goTo('Home')}>
+            <Text style={{opacity: state.index===0? 1 : 0.5}}>Home</Text >
+            </TabItem>
+
+             <TabItem onPress={()=>goTo('Search')}>
+           <Text style={{opacity: state.index===1? 1 : 0.5}}>Search</Text>
+            </TabItem>
+
+
+--------------------
+36- O DO MEIO VAI FICA MAOIR - VAMOS FAZER UM COMPONENTES (TouchableOpacity) DIFERENTE PARA ELE
+const TabItemCenter = styled.TouchableOpacity`
+    width: 70px;
+    height: 70px;
+    justify-content: center;
+    align-items: center;
+    background-color: #FFF;
+    border-radius: 35px;
+    border: 3px solid #4EADBE;
+    margin-top: -20px;
+`;
+
+---E SUBSTITUIR O TabItem pelo TabItemCenter
+
+   <TabItemCenter onPress={()=>goTo('Appointments')}>
+           <Text style={{opacity: state.index===2? 1 : 0.5}}>Appointments</Text>
+            </TabItemCenter>
+
+-----------ok PERFEITO
+
+----NÃO CONSEGUIR ************ (importar nem os icon e nem o UserContext)
+
+37----AVATAR----- Pra colocar o AVATAR precisamos pegar informação do contexto , declarar useContext LA EM CIMA
+--E IMPORTAMOS O UserContext QUE CRIAMOS EM contexts
+import { UserContext } from '../contexts/UserContext';
+
+FAREMOS UM COMPONENTE PARA O AVATAR 
+const AvatarIcon = styled.Image`
+    width: 24px;
+    height: 24px;
+    border-radius: 12px;
+`;
+---FAREMOS UMA VARIAVEL PARA O UserContext E RENOMEAREMOS PARA USer
+ // CHAMAREMOS UserContext SO DE User
+    const {state:User} = useContext(UserContext);
+
+---E NA TabItem FAREMOS A OPÇÂO (SE O USUSARO DECLAROU OU INCLUIU AVATAR USAR O COMPONENTE SE NÃO USA O TabItem)
+<TabItem onPress={()=>goTo('Profile')}>
+                {user.avatar != '' ?
+                    <AvatarIcon source={{uri: user.avatar}} />
+                    :
+                    <AccountIcon style={{opacity: state.index===4? 1 : 0.5}} width="24" height="24" fill="#FFFFFF" />
+                }
+            </TabItem>
+---NÃO CONSEGUIR ************ (importar nem os icon e nem o UserContext)
+
+
+VAMOS SEGUIR SEM ICOM E SEM AVATAR
+
+38---TELA Home
+---VAMOS FAZER A TELA estilo.js O NOSSOS COMPONETENETS ESTILIZADOS EM Styled
+import React from 'react';
+import styled from 'styled-components/native';
+
+export const Container = styled.SafeAreaView`
+    flex: 1;
+    background-color: #63C2D1;
+`;
+
+---JA QUE RESOLVEMOS FAZER O Styled NA PASTA estilo.js da PASTA css VAMOS IMPORTAR_LO
+PARA HOME E USAR OS COMPONENTES FEITO ALI
+
+---DE INCIO NOSSSA Home.js FICA ASSSIM;
+import React from 'react'
+import { Text, View, Image } from 'react-native'
+import css from '../assets/css/Css'
+import { Container } from '../assets/css/estilo'
+
+export default () => {
+
+    return (
+
+            <Container>
+                    <Text>
+                        Home        
+                    </Text>
+                
+            </Container>
+
+       /*
+
+     <View style = {css.container}>
+         <Image style={{width:100, height:100, borderRadius:100}} source={require('../assets/images/today.png')} />
+        <Text>
+            Home        
+        </Text>
+       </View>
+    */
+
+    );
+
+}
+
+39---CONFECCIONANDO A TELA HOME
+-------------A NOSSA TELA VAI TER UM SCROL  E DENTRO DELE QUE VAMOS DESENHAR NOSSA TELA
+
+-------EM CIMA VAI TER UM CABEÇA^HOS (helders) com UM TEXTO E UM BOTÃO CONTENDO UM ICON
+  <HeaderArea>
+                            <HeaderTitle numberOfLines={2}>Encontre o seu barbeiro favorito</HeaderTitle>
+                                 <SearchButton onPress={()=>navigation.navigate('Search')}>
+                                    <SearchIcon width="26" height="26" fill="#FFFFFF" />
+                                </SearchButton>
+                        </HeaderArea>
+
+-------VAMOS TER TABEM UMA AREA DE LOCALIZAÇÂO
+ <LocationArea>
+                            <LocationInput
+                                placeholder="Onde você está?"
+                                placeholderTextColor="#FFFFFF"
+                                value={locationText}
+                                onChangeText={t=>setLocationText(t)}
+                                onEndEditing={handleLocationSearch}
+                            />
+                            <LocationFinder onPress={handleLocationFinder}>
+                                <MyLocationIcon width="24" height="24" fill="#FFFFFF" />
+                            </LocationFinder>
+                          </LocationArea>
+---------------
+-------PRECISAMOS ESTILIZAR (na TELA css.estilo) ESSE COMPONENTES E IMPORTARL-LOS
+import { Container,
+    Scroller,
+    HeaderArea,
+    HeaderTitle,
+    SearchButton,
+    LocationArea,
+    LocationInput,
+    LocationFinder,
+    LoadingIcon,
+    ListArea
+} from '../assets/css/estilo'
+
+---DFAREMOS NA estilo.js QUE VAI FICAR ASSIM:
+import React from 'react';
+import styled from 'styled-components/native';
+
+export const Container = styled.SafeAreaView`
+    flex: 1;
+    background-color: #63C2D1;
+`;
+
+export const Scroller = styled.ScrollView`
+    flex: 1;
+    padding: 20px;
+`;
+
+export const HeaderArea = styled.View`
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+`;
+export const HeaderTitle = styled.Text`
+    width: 250px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #FFF;
+`;
+export const SearchButton = styled.TouchableOpacity`
+    width: 26px;
+    height: 26px;
+`;
+
+export const LocationArea = styled.View`
+    background-color: #4EADBE;
+    height: 60px;
+    border-radius: 30px;
+    flex-direction: row;
+    align-items: center;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-top: 30px;
+`;
+export const LocationInput = styled.TextInput`
+    flex: 1;
+    font-size: 16px;
+    color: #FFFFFF;
+`;
+export const LocationFinder = styled.TouchableOpacity`
+    width: 24px;
+    height: 24px;
+`;
+export const LoadingIcon = styled.ActivityIndicator`
+    margin-top: 50px;
+`;
+export const ListArea = styled.View`
+    margin-top: 30px;
+    margin-bottom: 30px;
+`;
+
+
+
+------- 2:43
 
 
 
