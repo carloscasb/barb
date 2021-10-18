@@ -1,15 +1,14 @@
 import React, {useState, useContext} from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import css from '../assets/css/Css'
-import SignInput from "../../componentes/SignInput";
+import SignInput from "../componentes/SignInput";
 import { useNavigation } from "@react-navigation/native";
 import Api from '../Api';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import UserContext from '../contexts/UserContext'
 
 
-import Envelope from "../assets/images/Envelope.png";
-import Cadeado from  "../assets/images/Cadeado.png";
+
 
 
 export  default  function Login(){

@@ -6,6 +6,8 @@ import { StyleSheet } from "react-native";
     container: {
         flex: 1,
         alignItems: 'center'
+
+
     },
     container__center:{
         justifyContent:'center'

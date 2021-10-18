@@ -1,11 +1,13 @@
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const BASE_API = 'https://api.b7web.com.br/devbarber/api';
 //OBJETO QUE VAI TER AS AÇÕES QUE VAMOS PRECISAR FAZER
 
 // TOKEN
 
 export default{
- CkeckToken: async (token)=> {
+ ckeckToken: async (token)=> {
 
     const req = await fetch(`${BASE_API}/auth/refresh`, {
         method:'POST',
@@ -27,9 +29,9 @@ export default{
 
      // RECEBER um email e uma Senha aqui
     signIn: async (email, password)=> {
-        console.log("URL", `${BASE_API}/auth/login` );
-        console.log("email", email );
-        console.log("password" , password);
+    //    console.log("URL", `${BASE_API}/auth/login` );
+     //   console.log("email", email );
+    //    console.log("password" , password);
         const req = await fetch(`${BASE_API}/auth/login`, {
                 method:'POST',
                 headers: {
@@ -45,9 +47,9 @@ export default{
     },
  // CADASTRO
     signUp: async (name, email, password)=> {
-        console.log("name", name );
-        console.log("email", email );
-        console.log("password" , password);
+      //  console.log("name", name );
+       // console.log("email", email );
+       // console.log("password" , password);
         const req = await fetch(`${BASE_API}/auth/user`, {
             method:'POST',
                headers: {
@@ -61,4 +63,23 @@ export default{
         const json = await req.json();
         return json;
     },
+
+// FUNÇÂO LISTA DOS PROFISSIONAIS
+       //COMEÇA ZERA DADOS
+        getBarbers: async (lat=null, lng=null, address=null) => {
+             //PEGA O TOKEN
+        const token = await AsyncStorage.getItem('token');
+
+        console.log("LAT", lat);
+        console.log("LNG", lng);
+        console.log("ADDRESS", address);
+
+        const req = await fetch(`${BASE_API}/barbers?token=${token}&lat=${lat}&lng=${lng}&address=${address}`);
+       //retorna o RESULTADO
+        const json = await req.json();
+        return json;
+    }
+
 };
+
+

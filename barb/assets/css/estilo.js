@@ -45,6 +45,7 @@ export const LocationInput = styled.TextInput`
 export const LocationFinder = styled.TouchableOpacity`
     width: 24px;
     height: 24px;
+    border-radius: 30px;
 `;
 export const LoadingIcon = styled.ActivityIndicator`
     margin-top: 50px;

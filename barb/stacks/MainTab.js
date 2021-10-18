@@ -7,7 +7,7 @@ import Appointments from '../screens/Appointments';
 import Favorites from '../screens/Favorites';
 import Profile from '../screens/Profile';
 
-import CustomTabBar from "../../componentes/CustomTabBar";
+import CustomTabBar from "../componentes/CustomTabBar";
 
 
 const Tab = createBottomTabNavigator();
