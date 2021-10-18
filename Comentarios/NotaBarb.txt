@@ -2260,7 +2260,7 @@ export default () => {
                         </HeaderArea>
 
 -------VAMOS TER TABEM UMA AREA DE LOCALIZAÇÂO
- <LocationArea>
+                <LocationArea>
                             <LocationInput
                                 placeholder="Onde você está?"
                                 placeholderTextColor="#FFFFFF"
@@ -2271,7 +2271,7 @@ export default () => {
                             <LocationFinder onPress={handleLocationFinder}>
                                 <MyLocationIcon width="24" height="24" fill="#FFFFFF" />
                             </LocationFinder>
-                          </LocationArea>
+                 </LocationArea>
 ---------------
 -------PRECISAMOS ESTILIZAR (na TELA css.estilo) ESSE COMPONENTES E IMPORTARL-LOS
 import { Container,
@@ -2344,8 +2344,178 @@ export const ListArea = styled.View`
 `;
 
 
+--------NÃO CONSEGUIR COLOCAR AS IMAGENS COMO COMPOMETES , FIZ PELO IMAGE
+----SUBSTITUIR <SearchIcon width="26" height="26" fill="#FFFFFF" /> POR <Image>
+---O Container FICA ASSIM INICIALMENTE
 
-------- 2:43
+   <Container>
+                    <Scroller>
+                        <HeaderArea>
+                            <HeaderTitle >Encontre o seu barbeiro favorito</HeaderTitle>
+                                 <SearchButton >
+                                 // <SearchIcon width="26" height="26" fill="#FFFFFF" />
+                                 <Image
+                                 style={{  width:26, height:26, backgroundColor:'#fff' }}
+                                 source={require('../assets/images/profile.png')}
+                                    />
+                                </SearchButton>
+                        </HeaderArea>
+                    </Scroller>
+    </Container>
+
+
+40----VAMOS IMPORTAR O useNavigation e declarar-lo  NA NOSSA FUNÇÃO- PARA IR TESTASTANDO
+import { useNavigation } from '@react-navigation/native'
+---E DECLARA DENTRO DA FUNÇÃO
+
+export default () => {
+ 
+    const navigation = useNavigation();
+
+    return (
+
+            <Container>
+
+---ASSIM PODEMOS TEsTAR A NAVEGAÇÂO DENTRO DA TELA...ATRAVES DE ONPRESS, EXEMPLO NO BOTAO
+TouchableOpacity SearchButton DO CABEÇALHO            
+<SearchButton onPress={()=>navigation.navigate('Search')}>
+
+41--------VAMOS PARA LOCALIZAÇÃO 
+---NECESSARIO TEMOS UM State para CONTRALAR AS MODIFICAÇÕES DE ESTADO
+---VAMOS IMPORTAR o useState do REact e declara-LOS -CRIAR STAST
+import React,{useState} from 'react'
+---CRIAR ESTADO DENTRO DA NOSSA FUNÇÃO
+export default () => {
+ 
+    const navigation = useNavigation();
+    const [locationText, setLocationText] = useState('');
+    return (
+-----------E USA LA NO ImputTEXT NA PROPRIEDADE Value e onChangeText QUANDO O USUSARIO MODIFICAR O TEXT 
+(o texto digitada assume o estado, isso é fica salvo no state criado)  
+
+ <LocationInput
+                                placeholder="Onde você está?"
+                                placeholderTextColor="#FFFFFF"
+                                value={locationText}
+                                onChangeText={t=>setLocationText(t)} // MUDOU TEXT , MODIFICA State
+                            />
+42-----PEGAR A LOCALIZAÇÃO (icone)
+---PARA PEGAR PRECISAMOS USAR AS BIBLIOTECAS request, PERMISSION 
+---INSTALAR DEPENDENCIAS
+# npm install --save react-native-permissions
+---INSTALAR TAMBEM geolocation
+# npm install @react-native-community/geolocation --save
+----E AINDA puxar o IMPORT DE platform do react-native PARA SABER EM QUE PLATAFORMA O APP ESTA RODANDO
+---E IMPORTAR AS BIBLIOTECAS
+import { Platform } from 'react-native'
+import { request, PERMISSIONS } from 'react-native-permissions'
+----VAMOS USAR O LoadingIcon (compomente CRIADA la em estilo) PARA INDICAR SE ESTA PROCURANDO
+---VAMOS COLOCA-LO ABAIXO DA LocationArea
+                  />
+                            </LocationFinder>
+                 </LocationArea>
+                 <LoadingIcon size="large" color="#FFFFFF" />
+                     </Scroller>
+
+----JA AAPRECE NA TELA
+---PARA APARARECER SO QUANDO FOR chamado
+ {loading &&
+                  <LoadingIcon size="large" color="#FFFFFF" />
+                 }
+
+43-------VAMOS TER QUE IR LA EM api.js E FAZER UMA API PARA OS PROFISSIONAIS e depois levar para Home.js
+
+---LA EM Api.js IMPORT AsyncStorage
+import AsyncStorage from "@react-native-async-storage/async-storage";
+---E FAZ A FUNÇÃO sem se preocupar com localização por enquanto
+// FUNÇÂO LISTA DOS PROFISSIONAIS
+       //COMEÇA ZERA DADOS
+        getBarbers: async (lat=null, lng=null, address=null) => {
+             //PEGA O TOKEN
+        const token = await AsyncStorage.getItem('token');
+
+        console.log("LAT", lat);
+        console.log("LNG", lng);
+        console.log("ADDRESS", address);
+
+        const req = await fetch(`${BASE_API}/barbers?token=${token}&lat=${lat}&lng=${lng}&address=${address}`);
+        const json = await req.json();
+        return json;
+    }
+--------VAMOS LA EM HOME E Importa A API
+import Api from '../Api'
+
+44---FAZER COMPONENTE BarberItem.js em componentes
+---COMPONENTE BarberItem FICA ASSIM
+import React from 'react';
+import styled from 'styled-components/native';
+
+import Stars from '../components/Stars';
+
+const Area = styled.TouchableOpacity`
+    background-color: #FFFFFF;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    padding: 15px;
+    flex-direction: row;
+`;
+
+const Avatar = styled.Image`
+    width: 88px;
+    height: 88px;
+    border-radius: 20px;
+`;
+
+const InfoArea = styled.View`
+    margin-left: 20px;
+    justify-content: space-between;
+`;
+
+const UserName = styled.Text`
+    font-size: 17px;
+    font-weight: bold;
+`;
+
+const SeeProfileButton = styled.View`
+    width: 85px;
+    height: 26px;
+    border: 1px solid #4EADBE;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+`;
+
+const SeeProfileButtonText = styled.Text`
+    font-size: 13px;
+    color: #268596;
+`;
+
+
+export default ({data}) => {
+    return (
+        <Area>
+            <Avatar source={{uri: data.avatar}} />
+            <InfoArea>
+                <UserName>{data.name}</UserName>
+
+                <Stars stars={data.stars} showNumber={true} />
+
+                <SeeProfileButton>
+                    <SeeProfileButtonText>Ver Perfil</SeeProfileButtonText>
+                </SeeProfileButton>
+            </InfoArea>
+        </Area>
+    );
+}
+
+------FAZER
+
+
+
+
+
+
+------- 2:59
 
 
 
