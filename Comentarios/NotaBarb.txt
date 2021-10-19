@@ -2405,10 +2405,11 @@ export default () => {
 # npm install --save react-native-permissions
 ---INSTALAR TAMBEM geolocation
 # npm install @react-native-community/geolocation --save
-----E AINDA puxar o IMPORT DE platform do react-native PARA SABER EM QUE PLATAFORMA O APP ESTA RODANDO
+----E AINDA DECLARAR o IMPORT DE platform do react-native PARA SABER EM QUE PLATAFORMA O APP ESTA RODANDO
 ---E IMPORTAR AS BIBLIOTECAS
 import { Platform } from 'react-native'
 import { request, PERMISSIONS } from 'react-native-permissions'
+import Geolocation from '@react-native-community/geolocation'
 ----VAMOS USAR O LoadingIcon (compomente CRIADA la em estilo) PARA INDICAR SE ESTA PROCURANDO
 ---VAMOS COLOCA-LO ABAIXO DA LocationArea
                   />
@@ -2417,14 +2418,14 @@ import { request, PERMISSIONS } from 'react-native-permissions'
                  <LoadingIcon size="large" color="#FFFFFF" />
                      </Scroller>
 
-----JA AAPRECE NA TELA
----PARA APARARECER SO QUANDO FOR chamado
+----JA AAPRECE NA TELA o loading
+---MANIPULAMOS PARA APARECER SOmente QUANDO FOR chamado
  {loading &&
                   <LoadingIcon size="large" color="#FFFFFF" />
                  }
 
 43-------VAMOS TER QUE IR LA EM api.js E FAZER UMA API PARA OS PROFISSIONAIS e depois levar para Home.js
-
+-----OBS:ACREDITO QUE TEMOS QUE TER UMA WEBSERCER (BD)
 ---LA EM Api.js IMPORT AsyncStorage
 import AsyncStorage from "@react-native-async-storage/async-storage";
 ---E FAZ A FUNÇÃO sem se preocupar com localização por enquanto
@@ -2508,7 +2509,230 @@ export default ({data}) => {
     );
 }
 
-------FAZER
+
+--=---DANDO ERRO NO STAR (componentes)
+
+45------FAZER O COMPONENTE STAR (estrelinhas)
+
+import React from 'react';
+import styled from 'styled-components/native';
+
+import StarFull from '../assets/images/star.png';
+import StarHalf from '../assets/images/star_half.png';
+import StarEmpty from '../assets/images/star_empty.png';
+
+const StarArea = styled.View`
+    flex-direction: row;
+`;
+const StarView = styled.View``;
+
+const StarText = styled.Text`
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 5px;
+    color: #737373;
+`;
+
+export default ({ stars, showNumber }) => {
+    let s = [0, 0, 0, 0, 0];
+    let floor = Math.floor(stars);
+    let left = stars - floor;
+
+    for(var i=0;i<floor;i++) {
+        s[i] = 2;
+    }
+    if(left > 0) {
+        s[i] = 1;
+    }
+
+    return (
+        <StarArea>
+            {s.map((i, k)=>(
+                <StarView key={k}>
+                    {i === 0 && <StarEmpty width="18" height="18" fill="#FF9200" />}
+                    {i === 1 && <StarHalf width="18" height="18" fill="#FF9200" />}
+                    {i === 2 && <StarFull width="18" height="18" fill="#FF9200" />}
+                </StarView>
+            ))}
+            {showNumber && <StarText>{stars}</StarText>}
+        </StarArea>
+    );
+}
+
+
+-----------A TELA HOME ESTA ASSIM: 
+
+import React,{useState, useEffect} from 'react'
+import { Text, View, Image } from 'react-native'
+import { Platform } from 'react-native'
+import css from '../assets/css/Css'
+import { useNavigation } from '@react-navigation/native'
+import { request, PERMISSIONS } from 'react-native-permissions'
+import Geolocation from '@react-native-community/geolocation'
+import Api from '../Api'
+
+import { Container,
+    Scroller,
+    HeaderArea,
+    HeaderTitle,
+    SearchButton,
+    LocationArea,
+    LocationInput,
+    LocationFinder,
+    LoadingIcon,
+    ListArea
+} from '../assets/css/estilo'
+
+import BarberItem from '../componentes/BarberItem'
+//import SearchIcon from '../assets/images/search.png';
+//import MyLocationIcon  from '../assets/images/my_location.png';
+
+
+export default () => {
+ 
+    const navigation = useNavigation();
+    // CRIAR state para localização
+    const [locationText, setLocationText] = useState('');
+    // State que vai armazenar as coordenadas do usuario
+    const [coords, setCoords] = useState(null);
+    // State do loading
+    const [loading, setLoading] = useState(false);
+    // State dos PROFISIONAIS
+    const [list, setList] = useState([]);
+
+    const [refreshing, setRefreshing] = useState(false);
+    
+    // FUNÇÃO DE PEGAR LOCALIZAÇÃO - QUANDO CLICK
+    const handleLocationFinder = async () => {
+         //ZERA QUALQUER LOCALIZAÇÃO (dado)
+        setCoords(null);
+         // PEDIR PERMISÃO --let resultado é o resultado do proceso de pedir permissão
+        let result = await request(
+            // SE FOR IOS UMA PERMISSION CASO CONTRARIO OUTRA
+            Platform.OS === 'ios' ?
+                PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
+                :
+                PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
+        );
+   // SE O USUARIO DEU ACESSO ... CASO CONTRARIO
+        if(result == 'granted') {
+           //se der acesso , aparecer loading , zerar o texto (vazio, a list de profissionais vazia)
+            setLoading(true);
+            setLocationText('');
+            setList([]);
+   //PEGAR A LOCALIZAÇÃO DO USUSARIO
+            Geolocation.getCurrentPosition((info)=>{
+               //---TETSTANDO 
+                // console.log(info);   
+                 // SALVEI AS COORDENADAS
+                setCoords(info.coords);
+                // FUNÇÃO PARA PEGAR OS PROFISSIONAIS DA LOCALIZAÇÃO -AQUI acredito que temos que ter uma webserver(BD)
+                getBarbers();
+            });
+
+        }
+    }
+
+            // FUNÇÂO LISTA DOS PROFISSIONAIS (FAZER LA NA api.js)
+            const getBarbers = async () => {
+                setLoading(true);
+                setList([]);
+        
+                let lat = null;
+                let lng = null;
+                if(coords) {
+                    lat = coords.latitude;
+                    lng = coords.longitude;
+                }
+        
+                let res = await Api.getBarbers(lat, lng, locationText);
+                if(res.error == '') {
+                    if(res.loc) {
+                        setLocationText(res.loc);
+                    }
+                    setList(res.data);
+                } else {
+                    alert("Erro: "+res.error);
+                }
+        
+                setLoading(false);
+            }
+        
+            useEffect(()=>{
+                getBarbers();
+            }, []);
+        
+            const onRefresh = () => {
+                setRefreshing(false);
+                getBarbers();
+            }
+        
+            const handleLocationSearch = () => {
+                setCoords({});
+                getBarbers();
+            }
+        
+
+
+    return (
+
+            <Container>
+                    <Scroller>
+                        <HeaderArea>
+                            <HeaderTitle >Encontre o seu barbeiro favorito</HeaderTitle>
+                                 <SearchButton onPress={()=>navigation.navigate('Search')}>
+                                 <Image
+                                 style={{  width:26, height:26, backgroundColor:'#fff' }}
+                                 source={require('../assets/images/pessoa.png')}
+                                    />
+                                </SearchButton>
+                        </HeaderArea>
+
+                        <LocationArea>
+                            <LocationInput
+                                placeholder="Onde você está?"
+                                placeholderTextColor="#FFFFFF"
+                                value={locationText}
+                                onChangeText={t=>setLocationText(t)} // MUDOU TEXT , MODIFICA State
+
+
+                             // PEGAR LOCALIZAÇÂO
+                            /> 
+                             <LocationFinder onPress={handleLocationFinder}>
+                            <Image
+                                 style={{  width:26, height:26, backgroundColor:'#fff', borderRadius:30 }}
+                                 source={require('../assets/images/localiza.png')}
+                                    />
+                            </LocationFinder>
+                 </LocationArea>
+
+                 {loading &&
+                  <LoadingIcon size="large" color="#FFFFFF" /> 
+                 }
+                
+                <ListArea>
+                    {list.map((item, k)=>(
+                        <BarberItem key={k} data={item} />  // EXIBIR LISTA
+                    ))}
+                </ListArea>
+
+ 
+
+                    </Scroller>
+                
+            </Container>
+
+           
+
+    );
+
+}
+
+
+46------RefreshControl NA HOME 
+---IMPORTAR
+import { Platform , RefreshControl} from 'react-native'
+---FUNÇÃo onRefresh
 
 
 
