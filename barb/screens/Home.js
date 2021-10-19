@@ -1,9 +1,10 @@
 import React,{useState, useEffect} from 'react'
 import { Text, View, Image } from 'react-native'
-import { Platform } from 'react-native'
+import { Platform , RefreshControl} from 'react-native'
 import css from '../assets/css/Css'
 import { useNavigation } from '@react-navigation/native'
 import { request, PERMISSIONS } from 'react-native-permissions'
+import Geolocation from '@react-native-community/geolocation'
 import Api from '../Api'
 
 import { Container,
@@ -34,6 +35,7 @@ export default () => {
     const [loading, setLoading] = useState(false);
     // State dos PROFISIONAIS
     const [list, setList] = useState([]);
+
     const [refreshing, setRefreshing] = useState(false);
     
     // FUNÇÃO DE PEGAR LOCALIZAÇÃO - QUANDO CLICK
@@ -50,6 +52,7 @@ export default () => {
         );
    // SE O USUARIO DEU ACESSO ... CASO CONTRARIO
         if(result == 'granted') {
+           //se der acesso , aparecer loading , zerar o texto (vazio, a list de profissionais vazia)
             setLoading(true);
             setLocationText('');
             setList([]);
@@ -59,7 +62,7 @@ export default () => {
                 // console.log(info);   
                  // SALVEI AS COORDENADAS
                 setCoords(info.coords);
-                // FUNÇÃO PARA PEGAR OS PROFISSIONAIS DA LOCALIZAÇÃO
+                // FUNÇÃO PARA PEGAR OS PROFISSIONAIS DA LOCALIZAÇÃO -AQUI acredito que temos que ter uma webserver(BD)
                 getBarbers();
             });
 
@@ -101,7 +104,9 @@ export default () => {
             }
         
             const handleLocationSearch = () => {
+                //ZERAR AS COORDENADAS
                 setCoords({});
+                //PEGAR A ATUAL (digitada)
                 getBarbers();
             }
         
@@ -110,7 +115,9 @@ export default () => {
     return (
 
             <Container>
-                    <Scroller>
+                     <Scroller refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }>
                         <HeaderArea>
                             <HeaderTitle >Encontre o seu barbeiro favorito</HeaderTitle>
                                  <SearchButton onPress={()=>navigation.navigate('Search')}>
@@ -127,7 +134,7 @@ export default () => {
                                 placeholderTextColor="#FFFFFF"
                                 value={locationText}
                                 onChangeText={t=>setLocationText(t)} // MUDOU TEXT , MODIFICA State
-
+                                onEndEditing={handleLocationSearch} // DAR UM ENTER , MODIFICA State
 
                              // PEGAR LOCALIZAÇÂO
                             /> 
@@ -142,12 +149,14 @@ export default () => {
                  {loading &&
                   <LoadingIcon size="large" color="#FFFFFF" /> 
                  }
- 
-             <ListArea>
+                
+                <ListArea>
                     {list.map((item, k)=>(
                         <BarberItem key={k} data={item} />  // EXIBIR LISTA
                     ))}
                 </ListArea>
+
+ 
 
                     </Scroller>
                 
