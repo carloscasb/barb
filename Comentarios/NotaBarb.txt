@@ -2733,6 +2733,325 @@ export default () => {
 ---IMPORTAR
 import { Platform , RefreshControl} from 'react-native'
 ---FUNÇÃo onRefresh
+ const onRefresh = () => {
+                setRefreshing(false);
+                getBarbers();
+            }
+
+
+
+
+47---TIRAR Star ea Area em BarberItem ---PARA CONTINUAR
+
+  <Stars stars={data.    stars} showNumber={true} /> 
+
+48----VAMOS PROSSEGUIR NO BarberItem PARA FAZER QUE ELE VA PARA OUTRA TELA
+VAMOS PRECISAR DE UM onCLICK e VAMOS FAZER NA Area TODA
+--NA VERDADE A Area é um BOTAO opacity...Então faremos um onpress na Area com um metodo handleClick
+ <Area onPress={handleClick} >
+
+ ---E CRIAR UMA FUNÇÃO DE CLICK o handleClick UTILIZANDO-SE DO NAVIGATION 
+import { useNavigation } from '@react-navigation/native';
+export default ({data}) => {
+
+    // INSTACIA O navigation
+    const navigation=useNavigation();
+
+// FUNÇÃO DE CLICK, com o Navigatior para Navegar para tela do PROFISSIONAL (Barber) identificando-o
+// e mandando informações num segundo paramentro
+  const  handleClick = () => {
+       
+            navigation.navigate('Barber' , {
+                        id: data.id ,
+                        avatar: data.avatar,
+                        name: data.name,
+                      //   stars: data.stars
+
+            });
+    }
+
+    return (
+        <Area onPress={handleClick} >
+            <Avatar source={{uri: data.avatar}} />
+            <InfoArea>
+                <UserName>{data.name}</UserName>
+             
+             
+
+                <SeeProfileButton>
+                    <SeeProfileButtonText>Ver Perfil</SeeProfileButtonText>
+                </SeeProfileButton>
+            </InfoArea>
+        </Area>
+    );
+
+
+49--CRIAR  A TELA Barber DO PROFISSIONAL -EMBORA criaremos o componente Barber em Screens (item 50 abaixo) 
+a levaremos para  App.js   (mo caso da live MainStack.js)
+----COLOCAREMA A TELA Barber dentro do Container da App.js DA NOSSA APLICAÇÂO ASSIM ELA FICA DISPONIBVEL 
+PARA TODA APLICAÇÂO
+ ---TEMOS QUE IMPORTAR-LA
+ import UserContextProfile from './barb/contexts/UserContext';
+import MainTab from './barb/stacks/MainTab';
+ import Barber from './barb/screens/Barber';
+
+---------E COLOCAR NO Container da App.js
+
+  export default function App() {
+  
+  //VAMOS Criar nossa PILHA que vai receber o retorno do createStackNavigator(pilha de navegação)
+    const Stack = createStackNavigator();
+
+
+//VAMOS Criar Container, o Navegador e as Telas de navegação ENGLOBADA PELO Context
+    return (
+     
+       <UserContextProfile>
+      <NavigationContainer>
+          <Stack.Navigator
+          initialRouteName="Preload" 
+         >
+          <Stack.Screen name="Preload" component={Preload}   options={{headerShown:false}}
+          // EXIBINDO uma tela Preload ---vai ficar um de cada vez (DEFINR A PRIMEIRA EM  <Stack.Navigator initialRouteName="Preload">)
+          />
+           <Stack.Screen name="SignIn" component={SignIn}   options={{headerShown:false}}/>
+           <Stack.Screen name="SignUp" component={SignUp}   options={{headerShown:false}}/>
+           <Stack.Screen name="MainTab" component={MainTab}   options={{headerShown:false}}/>
+           <Stack.Screen   name="Barber"   component={Barber}   options={{headerShown:false}} /> 
+          </Stack.Navigator>
+      </NavigationContainer>
+
+   </UserContextProfile>
+    );
+}
+
+50----AGORA FAREMOS A TELA Barber PROPRIAMENTE DITA
+
+---INICIALMENTE VAMOS FAZER UMA REQUISIÇÂO NA NOSSA Api.js DE APENAS UM PROFISSIONAL
+
+    //FAZER  REQUISIÇÃO DE INFORMAÇÂO DE UM PROFISSIONAL APENAS (ESPECIFICO) --ACIMA FOI DE TODOS
+    // Mandar somente o Id
+    getBarber: async (id) => {
+        //PEGA O TOKEN
+        const token = await AsyncStorage.getItem('token');
+         //FAZER  REQUISIÇÃO
+         const req = await fetch(`${BASE_API}/barber/${id}?token=${token}`);
+         //TRANSFORMA EM JSON 
+          const json = await req.json();
+         // TESTE
+          console.log(json);
+          //E retorna o RESULTADO
+          return json;
+
+    }
+
+----IMPORTAR AS DEPENDENCIAS NA TELA Barber
+import { useNavigation, useRoute } from '@react-navigation/native'
+
+INICIALMENTE ELA FICA ASSIM:
+import React, {useState, useEffect} from 'react'
+import { Text, View  } from 'react-native'
+import css from '../assets/css/Css'
+
+import { useNavigation, useRoute } from '@react-navigation/native'
+
+export default () => {
+
+    // INSTACIA O navigation e Router
+    const navigation=useNavigation();
+    const route = useRoute();
+
+    // PEGAR INFORMAÇÕES QUANDO ALGUEM MANDOU PARA ESSA TELA
+      //  Router.params.E O QUE QUER SE PEGAR
+
+      // FAZER State PARA SALVAR AS INFORMAÇÂOES INICIAIS
+      const [userInfo, setUserInfo] = useState({
+        //INFORMAÇÕES INICIAIS
+        id:route.params.id,
+        avatar:route.params.avatar,
+        name:route.params.name,
+        //star: route.params.star
+
+      });
+
+    return (
+        <View style = {css.container}>
+        <Text> Barber : {userInfo.name}      </Text>
+
+    </View>
+   
+
+    );
+}
+---OK PERFEITO  - Já traz o nome do PROFISSIONAL
+
+
+
+26 minuto do 2
+
+
+
+51----fazer um LOGAUT  na API que ainda não existe 
+--É SIMILAR AO SignUp e COLOCA LOGO ABAIXO
+
+// LOGAUT
+      logaut: async ()=> {
+        // NÃO MANDA SOMENTE O token
+      const token = await AsyncStorage.getItem('token');
+        const req = await fetch(`${BASE_API}/auth/logaut`, {
+            method:'POST',
+               headers: {
+                    accept: 'application/json',
+                    'Content-Type': 'application/json',
+               },
+           //CONTEUDO que estou enviando
+           body: JSON.stringify ( {token} )
+
+        });
+        const json = await req.json();
+        return json;
+    },
+
+
+---E EM Profile (PERFIL) FAZER UM BOTÂO DE LOGAUT --FICA ASSIm:
+
+import React from 'react'
+import { Text, View , Button } from 'react-native'
+import css from '../assets/css/Css'
+import { NavigationContainer, useNavigation } from '@react-navigation/native'
+import Api from '../Api'
+
+export default () => {
+
+     // INSTACIA O navigation
+     const navigation=useNavigation();
+
+     // FUNÇÃO DE CLICK,  Asunc pq vai mexer com Api
+    const  handlelogautClick = async () => {
+       // SE NÃO TIVER TOKEM VA PRA LOGIM SEM RETORNO
+        await Api.logaut();
+         navigation.reset({
+             routes:[{name:'signIn'}]
+         });
+      }
+    return (
+        <View style = {css.container}>
+        <Text> Profile   </Text>
+        <Button title="Sair" onPress={handlelogautClick} />
+    </View>
+   
+
+    );
+}
+
+-----A APi.js FICA ASSIM: 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const BASE_API = 'https://api.b7web.com.br/devbarber/api';
+//OBJETO QUE VAI TER AS AÇÕES QUE VAMOS PRECISAR FAZER
+
+// TOKEN
+
+export default{
+ ckeckToken: async (token)=> {
+
+    const req = await fetch(`${BASE_API}/auth/refresh`, {
+        method:'POST',
+            headers: {
+                    accept: 'application/json',
+                    'Content-Type': 'application/json',
+               },
+       //CONTEUDO que estou enviando
+       body: JSON.stringify ( {token} )
+
+    });
+    const json = await req.json();
+    return json;
+
+
+    },
+
+    // LOGIN
+
+     // RECEBER um email e uma Senha aqui
+    signIn: async (email, password)=> {
+    //    console.log("URL", `${BASE_API}/auth/login` );
+     //   console.log("email", email );
+    //    console.log("password" , password);
+        const req = await fetch(`${BASE_API}/auth/login`, {
+                method:'POST',
+                headers: {
+                    accept: 'application/json',
+                    'Content-Type': 'application/json',
+               },
+               //CONTEUDO que estou enviando
+               body: JSON.stringify ( {email, password} )
+
+            });
+            const json = await req.json();
+            return json;
+    },
+ // CADASTRO
+    signUp: async (name, email, password)=> {
+      //  console.log("name", name );
+       // console.log("email", email );
+       // console.log("password" , password);
+        const req = await fetch(`${BASE_API}/auth/user`, {
+            method:'POST',
+               headers: {
+                    accept: 'application/json',
+                    'Content-Type': 'application/json',
+               },
+           //CONTEUDO que estou enviando
+           body: JSON.stringify ( {name, email, password} )
+
+        });
+        const json = await req.json();
+        return json;
+    },
+
+    // LOGAUT
+    logaut: async ()=> {
+        // NÃO MANDA SOMENTE O token
+      const token = await AsyncStorage.getItem('token');
+        const req = await fetch(`${BASE_API}/auth/logaut`, {
+            method:'POST',
+               headers: {
+                    accept: 'application/json',
+                    'Content-Type': 'application/json',
+               },
+           //CONTEUDO que estou enviando
+           body: JSON.stringify ( {token} )
+
+        });
+        const json = await req.json();
+        return json;
+    },
+
+// FUNÇÂO LISTA DOS PROFISSIONAIS
+       //COMEÇA ZERA DADOS
+        getBarbers: async (lat=null, lng=null, address=null) => {
+             //PEGA O TOKEN
+        const token = await AsyncStorage.getItem('token');
+
+        console.log("LAT", lat);
+        console.log("LNG", lng);
+        console.log("ADDRESS", address);
+//COLOCA NA REQUISIÇÃO
+        const req = await fetch(`${BASE_API}/barbers?token=${token}&lat=${lat}&lng=${lng}&address=${address}`);
+       //TRANSFORMA EM JSON 
+        const json = await req.json();
+        //E retorna o RESULTADO
+        return json;
+    }
+
+};
+
+
+52----------
+
+
+
 
 
 
