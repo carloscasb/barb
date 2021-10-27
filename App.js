@@ -7,6 +7,7 @@ import SignUp from './barb/screens/SignUp';
 // IMPORTAT CONTEXT que ira  ENGLOBAR O APLICATIVO (NavigationContainer)
 import UserContextProfile from './barb/contexts/UserContext';
 import MainTab from './barb/stacks/MainTab';
+ import Barber from './barb/screens/Barber';
 
 
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
            <Stack.Screen name="SignIn" component={SignIn}   options={{headerShown:false}}/>
            <Stack.Screen name="SignUp" component={SignUp}   options={{headerShown:false}}/>
            <Stack.Screen name="MainTab" component={MainTab}   options={{headerShown:false}}/>
+           <Stack.Screen   name="Barber"   component={Barber}  options={{headerShown:false}}  /> 
           </Stack.Navigator>
       </NavigationContainer>
 
