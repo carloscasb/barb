@@ -2885,13 +2885,572 @@ export default () => {
 }
 ---OK PERFEITO  - Já traz o nome do PROFISSIONAL
 
+---IMPORTOR API 
+import Api from '../Api';
+---PEGAR OUTRAS INFORMAÇÔES
+
+//CRIAR UM LOADING
+      const [loading, setLoading]= useState(false);
+    
+      // ASSIM QUE ENTRA NA TELA 
+      useEffect( () => {
+      const getBarberInfo = async () => {
+        //QUANDO INICAR CHAMA O LOADING
+        setLoading(true);
+
+      // PEGA AS INFORMAÇÂO DO PROFISSIONAL
+      let json = await Api.getBarber(userInfo.id);
+      // VERIFICA SE TEM ERRO DO PROFISSIONAL , se não tiver
+      if (json.error == '') {
+        // PEGA TODAS AS INFORMAÇÕES
+        setUserInfo (json.data);
+
+      }else {
+        // SE TIVER ERRO
+        alert("ERRO : "+json.error);
+      }
+        //QUANDO FINALIZAR FECHA O LOADING
+        setLoading(false);
+      }
+
+      getBarberInfo();
+
+      }, []);
+ 
+ ------DESENHAR TELA Barber.js
+// IMPORTAR estilos
+import estilos, { Container } from '../assets/css/estilo'
+
+---E COLOCA DENTRO DO Container
+ return (
+       <Container>
+         <Text> Barber : {userInfo.name}      </Text>
+       </Container>
+
+    );
+
+-----PARA COMEÇAR VAMOS INSTALAR E  IMPORTAR O Swuiper   
+
+# npm install react-native-swiper
+// IMPORTAR Swiper
+import Swiper from 'react-native-swiper';
+
+---A Barber.js VAI TER A SEGUINTE ESTRUTURA BASICAMENTE
+ return (
+       <Container>
+         <Scroller>
+       
+        {userInfo.photos && userInfo.photos.length > 0 ?
+            <Swiper>
+
+            </Swiper>
+            :
+            <FakeSwiper>
+           
+            </FakeSwiper>
+
+         }  
+        
+           <PageBody>
+
+                <UserInfoArea>
+
+                </UserInfoArea>
+
+                <ServiceArea>
+                  
+                </ServiceArea>
+
+                <TestemunhoArea>
+
+                </TestemunhoArea>
+           </PageBody>
+        
+         </Scroller>
+       </Container>
+
+    );
+}
 
 
-26 minuto do 2
+---ENTAO VAMOS CRIAR ESSES COMPONENTES EM estilos E DEPOIS IMPORTAR
+import estilos, { Container, 
+   Scroller , FakeSwiper,
+   PageBody, UserInfoArea,
+   ServiceArea, TestemunhoArea,
+  SwiperDot, SwiperDotActive,
+   SwiperItem, SwiperImage
+  } from '../assets/css/estilo'
+
+
+----------OS COMPONENTES EM ESTILOS FICOU ASSIM :
+
+export const FakeSwiper = styled.View`
+    
+`;
+
+export const PageBody = styled.View`
+    
+`;
+
+export const UserInfoArea = styled.View`
+    
+`;
+
+export const ServiceArea = styled.View`
+    
+`;
+
+export const TestemunhoArea = styled.View`
+    
+`;
+export const SwiperDot = styled.View`
+    width: 15px;
+    height: 15px;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    margin:3px;
+`;
+
+export const SwiperDotActive = styled.View`
+        width: 15px;
+        height: 15px;
+        border-radius: 5px;
+        background-color: #000000;
+        margin:3px;
+`;
+
+export const SwiperItem = styled.View`
+        flex: 1;
+        background-color: #63C2D1;
+`;
+export const SwiperImage = styled.Image`
+            width: 100%;
+            height: 240px;
+`;
+
+----ATE AQUI PARTE DOS COMPONENTES NO estilos
+----E PARTE DO Swuiper DA TELA Barber.js
+
+ <Container>
+         <Scroller>
+       
+        {userInfo.photos && userInfo.photos.length > 0 ?
+            <Swiper 
+              style= {{height:240}}
+              dot={<SwiperDot/>}
+              activeDot={<SwiperDotActive/>}
+              paginationStyle={{top:15 , height:15, bottom: null, left:null}}
+              autoplay={true}
+            >
+              {userInfo.photos.map((item, key) => (
+            <SwiperItem key ={key}>
+              <SwiperImage source={{uri:item.url}} resizeMode='cover' />
+            </SwiperItem>
+
+              )) }
+
+            </Swiper>
+            :
+            <FakeSwiper>
+           
+            </FakeSwiper>
+
+         }  
+        
+           <PageBody>
+
+.
+.
+.
+
+
+-------JA PASSA AS IMAGENS NO Swuiper
+
+51---CONTINUA NA TELA Barber.js (PageBody)
+---EM ESTILOS DEFINE ELE
+export const PageBody = styled.View`
+        background-color: #FFFFFF;
+        border-top-left-radius:50px;
+         margin-top:-50px;
+          min-height: 600px;
+
+`;
+
+---TRABALHAR O QUE TEM DENTRO DELE NA barber.js (tres informações)
+---DENTRO DE UserInfoArea temos 3 informação UserAvatar, UserInfo (UserInfoName), UserFavButton
+---VAMOS TER QUE CRIAR ESSE COMPONENTES EM ESTILOS E TRAZER PARA Barber.js
+
+export const UserInfoArea = styled.View`
+        flex-direction:row;    
+
+`;
+
+export const UserAvatar = styled.Image`
+            width: 110px;
+            height: 110px;
+            border-Radius: 20px;
+            margin-Left:30px;
+            margin-Height:20px;
+            border-Width:4px;
+            border-Color:'#FFFFFF';
+    
+`;
+
+export const UserInfo = styled.Text`
+            flex: 1;
+            justify-Content:flex-end;
+            margin-Left:30px;
+      
+`;
+
+export const UserInfoName = styled.Text`
+    
+        color:#000000;
+        font-size:18px;
+        font-weigyh:'Bold';
+        margin-botton:10px;
+   
+    
+`;
+
+export const UserFavButton = styled.TouchableOpacity`
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        background-color: #FFFFFF;
+        border:2px solid #999999;
+        justify-content: center;
+        align-items: center;
+        
+`;
 
 
 
-51----fazer um LOGAUT  na API que ainda não existe 
+----EM Barber.js ESTILIZA (trabalha) a UserInfoArea
+
+//// IMPORTAR Stars - DESPREZAMOS STARS
+ import Stars from '../componentes/Stars'    
+// IMPORTAR Imagem de coração
+ import favorites from '../assets/images/favorites'
+
+
+<PageBody>
+
+                <UserInfoArea>
+
+                  <UserAvatar source={{uri:userInfo.avatar}}/>
+
+                  <UserInfo>
+                    <UserInfoName>{userInfo.name}</UserInfoName>
+                   // <Stars stars={userInfo.stars} showNumber={true} />   //STAR DEU PROBLEMA TIREI --ERRORXXXXXX
+                  </UserInfo>
+
+                  <UserFavButton>
+                   // <FavoriteIcon width="24" height="24" fill='#F00000' />//FAVORITE DEU PROBLEMA TIREI --ERRORXXXXXX
+                  </UserFavButton>
+
+                </UserInfoArea>
+
+                <ServiceArea>
+                  
+                </ServiceArea>
+
+                <TestemunhoArea>
+
+                </TestemunhoArea>
+
+           </PageBody>
+
+ ---APRESENTANDO ERRR XXXXXXXXXXX          
+
+52-----A TELA estilo.js FICA ASSIM
+import React from 'react';
+import styled from 'styled-components/native';
+
+export const Container = styled.SafeAreaView`
+    flex: 1;
+    background-color: #63C2D1;
+`;
+
+export const Scroller = styled.ScrollView`
+    flex: 1;
+    padding: 20px;
+`;
+
+export const HeaderArea = styled.View`
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+`;
+export const HeaderTitle = styled.Text`
+    width: 250px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #FFF;
+`;
+export const SearchButton = styled.TouchableOpacity`
+    width: 26px;
+    height: 26px;
+`;
+
+export const LocationArea = styled.View`
+    background-color: #4EADBE;
+    height: 60px;
+    border-radius: 30px;
+    flex-direction: row;
+    align-items: center;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-top: 30px;
+`;
+export const LocationInput = styled.TextInput`
+    flex: 1;
+    font-size: 16px;
+    color: #FFFFFF;
+`;
+export const LocationFinder = styled.TouchableOpacity`
+    width: 24px;
+    height: 24px;
+    border-radius: 30px;
+`;
+export const LoadingIcon = styled.ActivityIndicator`
+    margin-top: 50px;
+`;
+export const ListArea = styled.View`
+    margin-top: 30px;
+    margin-bottom: 30px;
+`;
+
+export const FakeSwiper = styled.View`
+    
+`;
+
+export const PageBody = styled.View`
+        background-color: #FFFFFF;
+        border-top-left-radius:50px;
+         margin-top:-50px;
+          min-height: 600px;
+
+`;
+
+export const ServiceArea = styled.View`
+    
+`;
+
+export const TestemunhoArea = styled.View`
+    
+`;
+export const SwiperDot = styled.View`
+    width: 15px;
+    height: 15px;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    margin:3px;
+`;
+
+export const SwiperDotActive = styled.View`
+        width: 15px;
+        height: 15px;
+        border-radius: 5px;
+        background-color: #000000;
+        margin:3px;
+`;
+
+export const SwiperItem = styled.View`
+        flex: 1;
+        background-color: #63C2D1;
+`;
+export const SwiperImage = styled.Image`
+            width: 100%;
+            height: 240px;
+`;
+
+export const UserInfoArea = styled.View`
+        flex-Direction:row;  
+      //  margin-Top: -30px; 
+
+`;
+
+export const UserAvatar = styled.Image`
+            width: 110px;
+            height: 110px;
+            border-Radius: 20px;
+            margin-Left:30px;
+            margin-Height:20px;
+            border-Width:4px;
+            border-Color:'#FFFFFF';
+    
+`;
+
+export const UserInfo = styled.Text`
+            flex: 1;
+            justify-Content:flex-end;
+            margin-Left:30px;
+            
+      
+`;
+
+export const UserInfoName = styled.Text`
+    
+        color:#000000;
+        font-Size:18px;
+        font-Weigyh:'Bold';
+        margin-Botton:10px;
+    
+`;
+
+export const UserFavButton = styled.TouchableOpacity`
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        background-color: #FFFFFF;
+        border:2px solid #999999;
+        justify-Content: center;
+        align-items: center;
+        
+`;
+
+53  -- A TLEA Barber.js FICA ASSIM:
+import React, {useState, useEffect} from 'react'
+import { Text, View  } from 'react-native'
+import css from '../assets/css/Css'
+// IMPORTAR estilos
+import estilos, { Container, 
+   Scroller , FakeSwiper,
+   PageBody, UserInfoArea,
+   ServiceArea, TestemunhoArea,
+   SwiperDot, SwiperDotActive,
+   SwiperItem, SwiperImage,
+   UserAvatar, UserInfo,
+   UserInfoName, UserFavButton
+  } from '../assets/css/estilo'
+
+// IMPORTAR API
+import Api from '../Api';
+
+import { useNavigation, useRoute } from '@react-navigation/native'
+// IMPORTAR Swiper
+import Swiper from 'react-native-swiper';
+// IMPORTAR Stars - DESPREZAMOS STARS
+import Stars from '../componentes/Stars'    
+// IMPORTAR Imagem de coração
+ import FavoriteIcon from '../assets/images/favorites.png'
+
+export default () => {
+
+    // INSTACIA O navigation e Router
+    const navigation=useNavigation();
+    const route = useRoute();
+
+    // PEGAR INFORMAÇÕES QUANDO ALGUEM MANDOU PARA ESSA TELA
+      //  Router.params.E O QUE QUER SE PEGAR
+
+      // FAZER State PARA SALVAR AS INFORMAÇÂOES INICIAIS
+      const [userInfo, setUserInfo] = useState({
+        //INFORMAÇÕES INICIAIS
+        id:route.params.id,
+        avatar:route.params.avatar,
+        name:route.params.name,
+        //star: route.params.star
+
+      });
+
+      //CRIAR UM LOADING
+      const [loading, setLoading]= useState(false);
+    
+      // ASSIM QUE ENTRA NA TELA 
+      useEffect( () => {
+      const getBarberInfo = async () => {
+        //QUANDO INICAR CHAMA O LOADING
+        setLoading(true);
+
+      // PEGA AS INFORMAÇÂO DO PROFISSIONAL
+      let json = await Api.getBarber(userInfo.id);
+      // VERIFICA SE TEM ERRO DO PROFISSIONAL , se não tiver
+      if (json.error == '') {
+        // PEGA TODAS AS INFORMAÇÕES
+        setUserInfo (json.data);
+
+      }else {
+        // SE TIVER ERRO
+        alert("ERRO : "+json.error);
+      }
+        //QUANDO FINALIZAR FECHA O LOADING
+        setLoading(false);
+      }
+
+      getBarberInfo();
+
+      }, []);
+ 
+    return (
+       <Container>
+         <Scroller>
+       
+        {userInfo.photos && userInfo.photos.length > 0 ?
+            <Swiper 
+              style= {{height:240}}
+              dot={<SwiperDot/>}
+              activeDot={<SwiperDotActive/>}
+              paginationStyle={{top:15 , height:15, bottom: null, left:null}}
+              autoplay={true}
+            >
+              {userInfo.photos.map((item, key) => (
+            <SwiperItem key ={key}>
+              <SwiperImage source={{uri:item.url}} resizeMode='cover' />
+            </SwiperItem>
+
+              )) }
+
+            </Swiper>
+            :
+            <FakeSwiper>
+           
+            </FakeSwiper>
+
+         }  
+        
+           <PageBody>
+
+                <UserInfoArea>
+
+                  <UserAvatar source={{uri:userInfo.avatar}}/>
+
+                  <UserInfo>
+                     <UserInfoName>{userInfo.name}</UserInfoName>
+                    
+                  </UserInfo>
+
+                  <UserFavButton>
+                      
+                  </UserFavButton>
+
+                </UserInfoArea>
+
+                <ServiceArea>
+                  
+                </ServiceArea>
+
+                <TestemunhoArea>
+
+                </TestemunhoArea>
+
+           </PageBody>
+        
+         </Scroller>
+       </Container>
+
+    );
+}
+
+---FALTA FAZER O BOTÂO DE VOLTAR
+
+1:04 da SEGUNDA PARTE
+
+
+
+54----fazer um LOGAUT  na API que ainda não existe 
 --É SIMILAR AO SignUp e COLOCA LOGO ABAIXO
 
 // LOGAUT
@@ -2913,7 +3472,7 @@ export default () => {
     },
 
 
----E EM Profile (PERFIL) FAZER UM BOTÂO DE LOGAUT --FICA ASSIm:
+55---E EM Profile (PERFIL) FAZER UM BOTÂO DE LOGAUT --FICA ASSIm:
 
 import React from 'react'
 import { Text, View , Button } from 'react-native'
@@ -2944,7 +3503,7 @@ export default () => {
     );
 }
 
------A APi.js FICA ASSIM: 
+56-----A APi.js FICA ASSIM: 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BASE_API = 'https://api.b7web.com.br/devbarber/api';
@@ -3048,14 +3607,28 @@ export default{
 };
 
 
-52----------
+---FALTA FAZER O BOTÂO DE VOLTAR LA NO 53
 
+1:04 da SEGUNDA PARTE
+npx react-native run-android
 
+57-------TODA ESSA PARTE DE BAIXA VEM DO WEBSERVER
 
+58 ---ENQUANTO  A PARTE DE BAIXO CARREGA VAMOS COLOCAR UM LOADIN|g
+--JA TEMOS O STATE DO LOADING la em cima E O COMPONENTE LA EM estilos.js
+ //CRIAR UM LOADING
+      const [loading, setLoading]= useState(false);
 
-
-
-
+                </UserInfoArea>
+----VAMOS COLOCAR ENTRE A  E A ServiceArea  em Barber.js
+  </UserInfoArea>
+                
+                {loading &&  //QUANDO TIVER CARREGANDO
+                <LoadingIcon size="large" color="#000000" />
+                }
+    <ServiceArea>
+                  
+59---FAZER OS SERVICES 1:16
 
 
 ------- 2:59
